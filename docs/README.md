@@ -1,4 +1,3 @@
-```markdown
 # PCINS API Specifications
 
 # PCINS Hosted Payment Interface Service
@@ -22,4 +21,3 @@ We will do everything in this book, but if you notice any omission, please conta
 ----- 
 
 * 2025 Release Ver 1.0.4
-```
