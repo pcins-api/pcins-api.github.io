@@ -1,6 +1,3 @@
-```markdown
-
-
 - 언어
   - [:kr: 한국어](/)
   - [:us: English](/en/)
@@ -8,4 +5,3 @@
 
 - [GitHub](https://github.com/your-username/your-repo)
 - [대시보드](https://dashboard.example.com)
-```

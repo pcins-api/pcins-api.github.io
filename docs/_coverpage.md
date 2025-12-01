@@ -1,9 +1,6 @@
-```markdown
+![logo](/images/logo.png)
 
-
-![logo](https://docsify.js.org/_media/icon.svg)
-
-# My API Docs v1.0
+# PCINS v1.0
 
 > 강력하고 사용하기 쉬운 RESTful API
 
@@ -16,4 +13,3 @@
 
 
 ![color](#f0f0f0)
-```
