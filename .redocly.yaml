@@ -1,0 +1,6 @@
+{
+  "extends": "openapi",
+  "rules": {
+    "no-unused-components": "off"
+  }
+}
