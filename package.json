@@ -1,0 +1,13 @@
+{
+  "name": "pcins-api-docs",
+  "version": "1.0.0",
+  "description": "PCINS Payment Gateway API Documentation",
+  "scripts": {
+    "dev": "npx @redocly/cli preview-docs openapi.yaml",
+    "build": "npx @redocly/cli build-docs openapi.yaml --output-dir dist",
+    "lint": "npx @redocly/cli lint openapi.yaml"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^1.0.0"
+  }
+}

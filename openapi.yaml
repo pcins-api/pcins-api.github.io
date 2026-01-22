@@ -1,0 +1,726 @@
+openapi: 3.0.3
+info:
+  title: PCINS Payment Gateway API
+  description: |
+    # PCINS Payment Gateway API Documentation
+    
+    ## Overview
+    This API provides payment processing services including credit card payments, QR payments, 3D Secure authentication, and transaction management.
+    
+    ## Base URLs
+    - **Sandbox**: `https://sandbox.pcins.co.kr/gw`
+    - **Production**: `https://pay.pcins.co.kr/gw`
+    
+    ## Authentication
+    All API requests require:
+    - `merchantId`: Merchant ID issued by PCINS
+    - `merchantPwd`: Merchant password
+    
+    ## Common Parameters
+    
+    ### Transaction Type (tradeGubun)
+    | Value | Definition |
+    |-------|------------|
+    | 1 | Sale (online approval) |
+    | 2 | Refund |
+    | 7 | Confirmation |
+    | 9 | Transaction inquiry |
+    | 11 | Register recurring billing |
+    | 12 | Cancel recurring billing |
+    
+    ### Currency (currType)
+    | Value | Definition |
+    |-------|------------|
+    | JPY | Japanese Yen |
+    | USD | US Dollar |
+    | EUR | Euro |
+    | KRW | Korean Won |
+    
+    ### Card Type (cardType)
+    | Value | Definition |
+    |-------|------------|
+    | AMX | American Express |
+    | JCB | Japanese Credit Bank |
+    | MSC | MasterCard |
+    | VIS | VISA |
+    
+    ## Result Codes
+    | Code | Definition |
+    |------|------------|
+    | 000 | Approval Success |
+    | 923 | Incorrect card number |
+    | 924 | Incorrect expiration date |
+    | 925 | Incorrect security code |
+    | 927 | Card company approval rejected |
+    | 941 | Payment already refunded |
+    
+    ## Support
+    Contact: support@pcins.co.kr
+  version: 1.0.5
+  contact:
+    email: support@pcins.co.kr
+  license:
+    name: Proprietary - PCINS Payment Gateway Co., Ltd.
+
+servers:
+  - url: https://sandbox.pcins.co.kr/gw
+    description: Sandbox Environment
+  - url: https://pay.pcins.co.kr/gw
+    description: Production Environment
+
+tags:
+  - name: UI Payment
+    description: Payment page integration for web/mobile
+  - name: Non-UI Payment
+    description: Direct API payment processing
+  - name: QR Payment
+    description: QR code based payments
+  - name: 3D Secure
+    description: 3D Secure authentication
+  - name: Transaction
+    description: Transaction management and inquiry
+
+paths:
+  /pay_link.jsp:
+    post:
+      tags:
+        - UI Payment
+      summary: Credit Card Payment (UI)
+      description: |
+        Redirects to PCINS payment screen for credit card input.
+        
+        ## Flow
+        1. Merchant sends form POST to pay_link.jsp
+        2. User redirected to PCINS payment page
+        3. User enters card info and completes payment
+        4. Result sent to callbackURL and returnURL
+      operationId: creditCardPaymentUI
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreditCardPaymentUIRequest'
+      responses:
+        '200':
+          description: Returns HTML form for redirect to payment page
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /pay_request.jsp:
+    post:
+      tags:
+        - Non-UI Payment
+        - Transaction
+      summary: Credit Card Payment, Refund & Transaction Inquiry (Non-UI)
+      description: |
+        Direct API payment and refund processing without UI redirection.
+        Use tradeGubun parameter to specify operation:
+        - tradeGubun=1: Payment
+        - tradeGubun=2: Refund
+        - tradeGubun=9: Transaction Inquiry
+      operationId: payRequest
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PayRequest'
+      responses:
+        '200':
+          description: XML response with transaction result
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+
+  /pay_external.jsp:
+    post:
+      tags:
+        - UI Payment
+        - 3D Secure
+      summary: External UI Payment (3DS)
+      description: |
+        External payment page with 3D Secure authentication support.
+        Returns JavaScript redirect to external payment URL.
+      operationId: externalUIPayment
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ExternalUIPaymentRequest'
+      responses:
+        '200':
+          description: JavaScript redirect or error response
+          content:
+            application/xml:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/JavascriptRedirectResponse'
+                  - $ref: '#/components/schemas/ErrorResponse'
+
+  /pay_direct3ds.jsp:
+    post:
+      tags:
+        - UI Payment
+        - 3D Secure
+      summary: Direct 3DS Payment (UI)
+      description: |
+        Direct 3D Secure payment with card info submitted directly.
+        Requires cardholder address for 3DS verification.
+      operationId: direct3DSPayment
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Direct3DSRequest'
+      responses:
+        '200':
+          description: JavaScript redirect or transaction result
+          content:
+            application/xml:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/JavascriptRedirectResponse'
+                  - $ref: '#/components/schemas/Direct3DSResponse'
+
+  /pay_3ds_status_check.jsp:
+    post:
+      tags:
+        - 3D Secure
+        - Non-UI Payment
+      summary: Payment Result Notification (Non-UI)
+      description: |
+        Webhook endpoint to receive 3DS payment result notification.
+        This is called after 3DS authentication is completed.
+      operationId: paymentResultNotification
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentNotificationRequest'
+      responses:
+        '200':
+          description: Notification received successfully
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+
+components:
+  schemas:
+    CreditCardPaymentUIRequest:
+      type: object
+      required:
+        - ver
+        - merchantId
+        - merchantPwd
+        - ref
+        - tradeGubun
+        - currType
+        - price
+        - payEmail
+        - payTel
+        - productName
+        - returnURL
+        - callbackURL
+      properties:
+        ver:
+          type: string
+          description: Interface version (always "100")
+          example: "100"
+        merchantId:
+          type: string
+          description: Merchant ID issued by PCINS
+          example: "MERCHANT001"
+        merchantPwd:
+          type: string
+          description: Merchant password (required for 3DS)
+        ref:
+          type: string
+          description: Merchant transaction number (order number)
+          example: "ORD20240122001"
+        tradeGubun:
+          type: string
+          description: Transaction type
+          enum:
+            - "1"
+            - "2"
+            - "7"
+            - "9"
+          example: "1"
+        currType:
+          type: string
+          description: Transaction currency
+          enum:
+            - JPY
+            - USD
+            - EUR
+            - KRW
+          example: "JPY"
+        price:
+          type: number
+          description: Transaction amount
+          example: 2000
+        payName:
+          type: string
+          description: Buyer name (English)
+        payId:
+          type: string
+          description: Buyer ID
+        payEmail:
+          type: string
+          description: Buyer email address
+          format: email
+        payTel:
+          type: string
+          description: Buyer phone number
+        productName:
+          type: string
+          description: Product name
+        returnURL:
+          type: string
+          description: URL to redirect after payment completion
+          format: uri
+        callbackURL:
+          type: string
+          description: URL to receive payment result notification (POST)
+          format: uri
+        transNo:
+          type: string
+          description: Transaction number (for refund/void)
+        cardType:
+          type: string
+          description: Card type code (required for 3DS)
+          enum:
+            - AMX
+            - JCB
+            - MSC
+            - VIS
+
+    PayRequest:
+      type: object
+      required:
+        - ver
+        - merchantId
+        - merchantPwd
+        - ref
+        - tradeGubun
+        - currType
+        - price
+      properties:
+        ver:
+          type: string
+          description: Interface version (always "100")
+          example: "100"
+        merchantId:
+          type: string
+          description: Merchant ID
+        merchantPwd:
+          type: string
+          description: Merchant password
+        ref:
+          type: string
+          description: Merchant transaction number
+        tradeGubun:
+          type: string
+          description: |
+            Transaction type
+            - "1": Sale (Payment)
+            - "2": Refund
+            - "7": Confirmation
+            - "9": Transaction Inquiry
+          enum:
+            - "1"
+            - "2"
+            - "7"
+            - "9"
+        currType:
+          type: string
+          description: Currency code
+          enum:
+            - JPY
+            - USD
+            - EUR
+            - KRW
+        price:
+          type: number
+          description: Transaction amount
+        cardNo:
+          type: string
+          description: Card number (16 digits) - required for payment (tradeGubun=1)
+          pattern: '^[0-9]{16}$'
+        expireM:
+          type: string
+          description: Card expiration month (MM) - required for payment
+          pattern: '^(0[1-9]|1[0-2])$'
+        expireY:
+          type: string
+          description: Card expiration year (YY) - required for payment
+          pattern: '^[0-9]{2}$'
+        csc:
+          type: string
+          description: Card security code (CVV)
+          pattern: '^[0-9]{3,4}$'
+        payName:
+          type: string
+          description: Cardholder name (English) - required for payment
+        payId:
+          type: string
+          description: Buyer ID
+        payEmail:
+          type: string
+          description: Buyer email - required for payment
+        payTel:
+          type: string
+          description: Buyer phone number - required for payment
+        productName:
+          type: string
+          description: Product name
+        transNo:
+          type: string
+          description: Original transaction number (required for refund)
+        returnURL:
+          type: string
+          description: Return URL
+        callbackURL:
+          type: string
+          description: Callback URL
+
+    ExternalUIPaymentRequest:
+      type: object
+      required:
+        - merchantId
+        - merchantPwd
+        - ref
+        - tradeGubun
+        - currType
+        - cardType
+        - price
+        - payName
+        - payId
+        - productName
+        - payEmail
+        - payTel
+      properties:
+        merchantId:
+          type: string
+          description: Merchant ID
+        merchantPwd:
+          type: string
+          description: Merchant password
+        ref:
+          type: string
+          description: Merchant transaction number
+        tradeGubun:
+          type: string
+          description: Transaction type
+          enum:
+            - "1"
+        currType:
+          type: string
+          description: Currency code
+          enum:
+            - JPY
+            - USD
+            - EUR
+            - KRW
+        cardType:
+          type: string
+          description: Card type code
+          enum:
+            - AMX
+            - JCB
+            - MSC
+            - VIS
+        price:
+          type: number
+          description: Transaction amount
+        payName:
+          type: string
+          description: Buyer name
+        payId:
+          type: string
+          description: Buyer ID
+        productName:
+          type: string
+          description: Product name
+        payEmail:
+          type: string
+          description: Buyer email
+        payTel:
+          type: string
+          description: Buyer phone number
+        callbackURL:
+          type: string
+          description: Callback URL
+        returnURL:
+          type: string
+          description: Return URL
+
+    Direct3DSRequest:
+      type: object
+      required:
+        - merchantId
+        - merchantPwd
+        - ref
+        - tradeGubun
+        - currType
+        - cardType
+        - cardNo
+        - expireM
+        - expireY
+        - csc
+        - price
+        - payName
+        - payId
+        - productName
+        - payEmail
+        - payTel
+        - address
+        - cityCode
+        - postCode
+      properties:
+        merchantId:
+          type: string
+          description: Merchant ID
+        merchantPwd:
+          type: string
+          description: Merchant password
+        ref:
+          type: string
+          description: Merchant transaction number
+        tradeGubun:
+          type: string
+          description: Transaction type
+          enum:
+            - "1"
+        currType:
+          type: string
+          description: Currency code
+          enum:
+            - JPY
+            - USD
+            - EUR
+            - KRW
+        cardType:
+          type: string
+          description: Card type code
+          enum:
+            - AMX
+            - JCB
+            - MSC
+            - VIS
+        cardNo:
+          type: string
+          description: Card number (16 digits)
+        expireM:
+          type: string
+          description: Expiration month (MM)
+        expireY:
+          type: string
+          description: Expiration year (YY)
+        csc:
+          type: string
+          description: Security code
+        price:
+          type: number
+          description: Transaction amount
+        payName:
+          type: string
+          description: Cardholder name
+        payId:
+          type: string
+          description: Buyer ID
+        productName:
+          type: string
+          description: Product name
+        payEmail:
+          type: string
+          description: Buyer email
+        payTel:
+          type: string
+          description: Buyer phone number
+        address:
+          type: string
+          description: Customer address (required for 3DS)
+        cityCode:
+          type: string
+          description: ISO-3166 state/province code (for Japan, e.g., "13" for Tokyo)
+        postCode:
+          type: string
+          description: Post code
+        callbackURL:
+          type: string
+          description: Callback URL
+        returnURL:
+          type: string
+          description: Return URL
+
+    PaymentNotificationRequest:
+      type: object
+      required:
+        - ver
+        - merchantId
+        - merchantPwd
+        - transNo
+        - checkoutId
+        - cardNo
+        - expireM
+        - expireY
+        - csc
+        - payName
+      properties:
+        ver:
+          type: string
+          description: Interface version
+          example: "100"
+        merchantId:
+          type: string
+          description: Merchant ID
+        merchantPwd:
+          type: string
+          description: Merchant password
+        transNo:
+          type: string
+          description: Transaction number from 3DS payment
+        checkoutId:
+          type: string
+          description: VAN Transaction ID
+        cardNo:
+          type: string
+          description: Card number
+        expireM:
+          type: string
+          description: Expiration month
+        expireY:
+          type: string
+          description: Expiration year
+        csc:
+          type: string
+          description: Security code
+        payName:
+          type: string
+          description: Buyer name
+
+    TransactionResponse:
+      type: object
+      properties:
+        ref:
+          type: string
+          description: Merchant transaction number
+        transNo:
+          type: string
+          description: PCINS transaction number
+        resultCode:
+          type: string
+          description: Result code (000=Success)
+        resultMsg:
+          type: string
+          description: Result message
+        transTime:
+          type: string
+          description: Transaction time (YYYYMMDDHHMMSS)
+        transStatus:
+          type: string
+          description: Transaction status (1=Sale, 2=Refund) - inquiry only
+        approvalNo:
+          type: string
+          description: Approval code from card company
+
+    JavascriptRedirectResponse:
+      type: object
+      properties:
+        responseType:
+          type: string
+          description: Response type indicator
+        ref:
+          type: string
+          description: Merchant transaction number
+        transNo:
+          type: string
+          description: Transaction number
+        resultCode:
+          type: string
+          description: Result code
+        resultMsg:
+          type: string
+          description: Result message
+        transTime:
+          type: string
+          description: Transaction time
+        transState:
+          type: string
+          description: Transaction state (A=Approved)
+        externalUrl:
+          type: string
+          description: External payment URL for redirect
+        refererUrl:
+          type: string
+          description: Referer URL for 3DS redirect
+        checkoutUrl:
+          type: string
+          description: Checkout URL for 3DS completion
+        approvalNo:
+          type: string
+          description: Approval number (if completed without 3DS)
+
+    Direct3DSResponse:
+      type: object
+      properties:
+        responseType:
+          type: string
+          description: Response type
+        ref:
+          type: string
+          description: Merchant transaction number
+        transNo:
+          type: string
+          description: Transaction number
+        transState:
+          type: string
+          description: Transaction state (A=Approved)
+        resultCode:
+          type: string
+          description: Result code
+        resultMsg:
+          type: string
+          description: Result message
+        transTime:
+          type: string
+          description: Transaction time
+        externalUrl:
+          type: string
+          description: External payment URL
+        approvalNo:
+          type: string
+          description: Approval number
+
+    ErrorResponse:
+      type: object
+      properties:
+        responseType:
+          type: string
+          description: Response type (ERROR)
+        ref:
+          type: string
+          description: Merchant transaction number
+        transNo:
+          type: string
+          description: Transaction number
+        resultCode:
+          type: string
+          description: Error code
+        resultMsg:
+          type: string
+          description: Error message
+        approvalNo:
+          type: string
+          description: Approval number (empty for error)
+
+security: []
