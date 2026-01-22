@@ -1,6 +1,3 @@
-{
-  "extends": "openapi",
-  "rules": {
-    "no-unused-components": "off"
-  }
-}
+extends: openapi
+rules:
+  no-unused-components: off
