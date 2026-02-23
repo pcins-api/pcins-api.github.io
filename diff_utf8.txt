@@ -1,0 +1,1749 @@
+﻿diff --git a/openapi.yaml b/openapi.yaml
+index 5ada2c3f..84affd63 100644
+--- a/openapi.yaml
++++ b/openapi.yaml
+@@ -6,17 +6,102 @@ info:
+     
+     ## Overview
+     PCINS e-Pay Interface Format1 (PeP1) Message Data Protocol
++    This data protocol describes the PCINS API specification.
++
++    ## Index
++    1. [Change History](#change-history)
++    2. [Abbreviations and symbols](#abbreviations-and-symbols)
++    3. [Master Field (Common Parameters)](#common-parameters)
++    4. [Credit Card Payment (UI)](#operation/creditCardPaymentAndCertificationUI)
++    5. [Credit Certification (UI)](#operation/creditCardPaymentAndCertificationUI)
++    6. [External UI Payment (UI)  3D Secure authentication support](#operation/externalUIPayment)
++    7. [Direct 3DS Payment (UI)  3D Secure authentication support](#operation/direct3DSPayment)
++    8. [QR Payment (UI)](#operation/qrPaymentUI)
++    9. [Credit Card Payment (Non-UI)](#operation/directPaymentAPI)
++    10. [Speed Payment (Non-UI)](#operation/directPaymentAPI)
++    11. [Refund (Non-UI)](#operation/directPaymentAPI)
++    12. [Transaction Inquiry (Non-UI)](#operation/directPaymentAPI)
++    13. [Payment Result Notification (Non-UI)](#operation/paymentResultNotification)
++    14. [ResultCode](#result-codes)
++
++    ## Change History
++    <details>
++      <summary style='cursor: pointer; cursor: hand;'><strong>v1.0.5</strong></summary>
++      <ul>
++        <li>Add <code>callbackURL</code> to Credit Card Payment (Non-UI) field</li>
++      </ul>
++    </details>
++    <details>
++      <summary style='cursor: pointer; cursor: hand;'><strong>v1.0.4</strong></summary>
++      <ul>
++        <li>Added an example response when a payment is completed without going through 3DS payment authentication in Direct 3DS Payment (UI)</li>
++      </ul>
++    </details>
++    <details>
++      <summary style='cursor: pointer; cursor: hand;'><strong>v1.0.3</strong></summary>
++      <ul>
++        <li>Added a new payment method. 3DS payments for <strong>VAN22(PCINS HR)</strong> must be made using the corresponding payment method (Direct 3DS Payment).</li>
++      </ul>
++    </details>
++    <details>
++      <summary style='cursor: pointer; cursor: hand;'><strong>v1.0.2</strong></summary>
++      <ul>
++        <li>Add <code>returnURL</code> to external UI payment field</li>
++      </ul>
++    </details>
++    <details>
++      <summary style='cursor: pointer; cursor: hand;'><strong>v1.0.1</strong></summary>
++      <ul>
++        <li>Add <code>callbackURL</code> to external UI payment field</li>
++        <li>Change the name of ErrorCode -> ResultCode</li>
++        <li>Add Result Code: <strong>200</strong></li>
++      </ul>
++    </details>
++    <details>
++      <summary style='cursor: pointer; cursor: hand;'><strong>v1.0.0</strong></summary>
++      <ul>
++        <li>Added a new payment method. 3DS payments for <strong>VAN36</strong> and <strong>VAN37</strong> must be made using the corresponding payment method (External UI Payment). <em>All future 3D Secure payments will be processed using this payment method.</em></li>
++        <li><code>payEmail</code>, <code>payTel</code> fields changed from <strong>O -> M</strong> Input Value (for Credit Card, Credit Certification, QR Payment).</li>
++        <li>Add Error Code: <strong>101, 611, 612, 900, 901, 935, 936, 941</strong></li>
++      </ul>
++    </details>
++
++    ## Abbreviations and Symbols
++    | Abbreviation | Definition |
++    | --- | --- |
++    | `<` | Variable length data that can be entered up to the written value |
++    | `a` | Letter or number such as alphabet |
++    | `C` | Conditional required (field created if condition is met) |
++    | `dp` | Decimal point |
++    | `h` | Hexadecimal |
++    | `M` | Required (field created) |
++    | `n` | Number |
++    | `O` | Optional (field created) |
++    | `V` | Variable data with no length limit |
+     
+     ## Base URLs
+-    - **Sandbox**: `https://sandbox.pcins.co.kr/gw`
+     - **Production**: `https://pay.pcins.co.kr/gw`
+     
+     ## Authentication
+     All API requests require:
+     - `merchantId`: Merchant ID issued by PCINS
+     - `merchantPwd`: Merchant password
++
++    ## Data Format Principles
++    - **JPY amounts** do not allow decimal points. **USD amounts** allow up to two decimal points.
++    - **expireM** (Card valid month): The request format is MM. If 10 or less, always include 0 (01, 02, 03...).
++    - **expireY** (Card valid year): The request format is YY. If it is less than 10, it must contain 0 (01, 02, 03...).
++    - **payId**: Only letters and numbers are allowed in the data format.
++    - **transTime**: The request format is YYYYMMDDHHMMSS.
+     
+     ## Common Parameters
++
++    ### Message Stage (erst)
++    | Value | Definition |
++    | --- | --- |
++    | logon | Logon Stage |
++    | aures | Confirmation stage |
++    | logoff | Logoff Stage |
+     
+     ### Transaction Type (tradeGubun)
+     | Value | Definition |
+@@ -44,33 +129,78 @@ info:
+     | JCB | Japanese Credit Bank |
+     | MSC | MasterCard |
+     | VIS | VISA |
++
++    ### Special CardNo for Speedy Payment
++    | Value | Definition |
++    |---|---|
++    | 88888888888888 | Search for credit card information in merchantId + phone number + payId |
++    | 88888888888881 | Search for credit card information in merchantId + phone number |
++    | 88888888888882 | Search for credit card information in merchantId + payId |
++
++    ### Language Code & Language (charset, lang)
++    | Attribute | Value | Definition |
++    |---|---|---|
++    | **charset** | UTF-8 | Global |
++    |             | SHIFT-JIS | Japanese |
++    |             | EUC-KR | Korean |
++    | **lang**    | JP | Japanese |
++    |             | EN | English |
++    |             | CN | Chinese |
++
++    ### Transaction Codes
++    | Field | Value | Definition |
++    |---|---|---|
++    | **transCode** (Status) | AS | Authorization Success |
++    |                        | AF | Authorization Failed |
++    | **transStaus** (Inquiry) | 1 | Sale |
++    |                          | 2 | Refund |
++
++    ### City Code (cityCode) - 3166-2:JP
++    | Code | Prefecture | Code | Prefecture | Code | Prefecture |
++    |---|---|---|---|---|---|
++    | 1 | HOKKAIDO | 17 | ISHIKAWA | 33 | OKAYAMA |
++    | 2 | AOMORI | 18 | FUKUI | 34 | HIROSHIMA |
++    | 3 | IWATE | 19 | YAMANASHI | 35 | YAMAGUCHI |
++    | 4 | MIYAGI | 20 | NAGANO | 36 | TOKUSHIMA |
++    | 5 | AKITA | 21 | GIFU | 37 | KAGAWA |
++    | 6 | YAMAGATA | 22 | SHIZUOKA | 38 | EHIME |
++    | 7 | FUKUSHIMA | 23 | AICHI | 39 | KOCHI |
++    | 8 | IBARAKI | 24 | MIE | 40 | FUKUOKA |
++    | 9 | TOCHIGI | 25 | SHIGA | 41 | SAGA |
++    | 10 | GUNMA | 26 | KYOTO | 42 | NAGASAKI |
++    | 11 | SAITAMA | 27 | OSAKA | 43 | KUMAMOTO |
++    | 12 | CHIBA | 28 | HYOGO | 44 | OITA |
++    | 13 | TOKYO | 29 | NARA | 45 | MIYAZAKI |
++    | 14 | KANAGAWA | 30 | WAKAYAMA | 46 | KAGOSHIMA |
++    | 15 | NIIGATA | 31 | TOTTORI | 47 | OKINAWA |
++    | 16 | TOYAMA | 32 | SHIMANE | | |
+     
+     ## Result Codes
+     | Code | Definition |
+     |------|------------|
+     | 000 | Approval Success |
+-    | 101 | Failed to enter continuous billing information |
++    | 101 | Failed to enter continuous billing information. |
+     | 200 | Request Connection |
+-    | 611 | Card exceeds monthly limit |
+-    | 612 | Card exceeds monthly transaction count |
+-    | 711 | Card BIN cannot be used |
+-    | 712 | Korean card payment not possible |
+-    | 713 | Risk card registration card |
+-    | 900 | Message too short |
+-    | 901 | Connection Error |
++    | 611 | Your card exceeds the monthly limit. Contact your administrator. |
++    | 612 | Your card exceeds the number of times you use it per month. Contact your administrator. |
++    | 711 | This card BIN cannot be used. |
++    | 712 | Korean card payment is not possible |
++    | 713 | Risk card registration card, please try again with another card. |
++    | 900 | The message is not long enough. |
++    | 901 | Connection Error. |
+     | 902 | VAN approval failure |
+-    | 909 | Payment already completed |
+-    | 910 | Card registered as risk transaction card |
+-    | 911 | One-time payment limit exceeded |
+-    | 912 | Daily payment limit exceeded |
+-    | 913 | Monthly payment limit exceeded |
+-    | 914 | Password mismatch |
+-    | 915 | Merchant Agreement not Live |
+-    | 916 | Required field not entered |
+-    | 917 | Transaction information does not exist |
+-    | 918 | Internet access restricted |
+-    | 919 | No payment information |
+-    | 920 | Limit exceeded |
++    | 909 | Payment has already been made. |
++    | 910 | This card number is registered to the risk transaction card. Payment is not possible. |
++    | 911 | The one-time payment limit has been exceeded. Please contact the administrator. |
++    | 912 | The daily payment limit has been exceeded. Please contact the administrator. |
++    | 913 | The one-month payment limit has been exceeded. Please contact the administrator. |
++    | 914 | The password does not match. |
++    | 915 | Merchant Agreement is not Live. |
++    | 916 | Requirements not entered* |
++    | 917 | Transaction information does not exist. |
++    | 918 | Internet access is restricted. Please contact the administrator. |
++    | 919 | There is no payment information. |
++    | 920 | Exceeded limit |
+     | 921 | Insufficient balance |
+     | 922 | Incorrect card holder |
+     | 923 | Incorrect card number |
+@@ -80,14 +210,58 @@ info:
+     | 927 | Card company approval rejected |
+     | 928 | Invalid card type |
+     | 929 | Stolen card |
+-    | 931 | Contact card company |
+-    | 932 | Enter security code (CVV) |
+-    | 933 | Incorrect card type |
+-    | 934 | Card not eligible for service |
+-    | 935 | Acquirer decline |
+-    | 936 | Minimum payment amount not met |
+-    | 941 | Payment already refunded |
+-    | 999 | Continuous charging already cancelled |
++    | 931 | Please contact the card company. |
++    | 932 | Please enter the security code (CVV). |
++    | 933 | Incorrect card type. |
++    | 934 | This card is not eligible for the service. |
++    | 935 | Acquirer decline. |
++    | 936 | The minimum payment amount has not been met. |
++    | 941 | This payment has already been refunded. |
++    | 999 | Continuous charging has already been canceled. |
++    
++    <details>
++    <summary style='cursor: pointer; cursor: hand;'>Detailed Error Messages</summary>
++    
++    ### Code 200
++    - Request Connection
++    - Mail sent successfully
++    
++    ### Code 901
++    - VAN login failed (VAN login information is incorrect.)
++    - Invalid response data (VAN response data is empty or invalid.)
++    
++    ### Code 902
++    - The set currency and payment currency are different, so please check the merchant settings. (The VAN line supports only one payment currency.)
++    
++    ### Code 916
++    - Required not input (merchantID) (Merchant ID not entered)
++    - Required not input (merchantPW) (Merchant PW not entered)
++    - Required not input (age) ()
++    - Required not input (tradeGubun) (tradeGubun not entered)
++    - Required not input (ref) (ref not entered)
++    - Required not input (currType) (currType not entered)
++    - Required not input (cardType) (cardType not entered)
++    - Card are not supported for payment.
++    - Required not input (cardNo) (cardNo not entered)
++    - Required not input (expireM, expireY) (expireM or expireY not entered)
++    - Required not input (payName) (payName not entered)
++    - Required not input (payId) (payId not entered)
++    - Required not input (payTel) (payTel not entered)
++    - Required not input (productName) (productName not entered)
++    - Required not input (price) (price not entered)
++    - Required not input (transNo) (transNo not entered)
++    - Required not input (regularId) (regularId not entered)
++    - The email format is invalid.
++    - Please contact the Merchant.
++    
++    ### Code 936
++    - Minimum payment amount must be ? Yen or more. (The minimum payment amount (Yen) set for the entire account or by store has not been met.)
++    - Minimum payment amount must be ? Dollar or more. (The minimum payment amount (Dollar) set for the entire account or by store has not been met.)
++    
++    ### Code 941
++    - This payment has already been refunded. (There is already a canceled transaction.)
++    - This payment is being refunded. (There is already a transaction waiting to be canceled.)
++    </details>
+     
+     ## Support
+     Contact: support@pcins.co.kr
+@@ -98,28 +272,18 @@ info:
+     name: Proprietary - PCINS Payment Gateway Co., Ltd.
+ 
+ servers:
+-  - url: https://sandbox.pcins.co.kr/gw
+-    description: Sandbox Environment
+   - url: https://pay.pcins.co.kr/gw
+     description: Production Environment
+ 
+ tags:
+-  - name: UI Payment
+-    description: Payment page integration for web/mobile
+-  - name: Non-UI Payment
+-    description: Direct API payment processing
+-  - name: QR Payment
+-    description: QR code based payments
+-  - name: 3D Secure
+-    description: 3D Secure authentication
+-  - name: Transaction
+-    description: Transaction management and inquiry
++  - name: API Endpoints
++    description: List of all PCINS Payment Gateway operations
+ 
+ paths:
+   /pay_link.jsp:
+     post:
+       tags:
+-        - UI Payment
++        - API Endpoints
+       summary: Credit Card Payment & Credit Certification (UI)
+       description: |
+         Redirects to PCINS payment screen for credit card payment or credit certification.
+@@ -130,795 +294,775 @@ paths:
+         3. User enters card info and completes payment/certification
+         4. Result sent to callbackURL and returnURL
+         
++        ## Return Payment Results (via redirect)
++        - **Success Callback:** `callbackURL?merchantId={id}&ref={ref}&payId={payId}&currType={cur}&price={price}&transNo={transNo}&transCode=AS`
++        - **Success Return:** `returnURL?transCode=AS&transNo={transNo}&ref={ref}`
++        - **Failure Return:** `returnURL?transCode=AF&transNo={transNo}&ref={ref}&errCode={errCode}`
++
+         ## Use tradeGubun=1 for Payment, tradeGubun=7 for Certification
+       operationId: creditCardPaymentAndCertificationUI
++      x-codeSamples:
++        - lang: HTML
++          label: HTML Form
++          source: |
++            <!-- Content-Type: application/x-www-form-urlencoded -->
++            <form method="POST" action="https://pay.pcins.co.kr/gw/pay_link.jsp">
++              <input type="hidden" name="merchantId" value="MERCHANT001">
++              <input type="hidden" name="ref" value="ORD20240122001">
++              <input type="hidden" name="tradeGubun" value="1">
++              <input type="hidden" name="currType" value="JPY">
++              <input type="hidden" name="price" value="2000">
++              <input type="hidden" name="payName" value="John Doe">
++              <input type="hidden" name="payId" value="customer123">
++              <input type="hidden" name="payEmail" value="john@example.com">
++              <input type="hidden" name="payTel" value="090-1234-5678">
++              <input type="hidden" name="productName" value="Test Product">
++              <input type="hidden" name="returnURL" value="https://your-site.com/return">
++              <input type="hidden" name="callbackURL" value="https://your-site.com/callback">
++              <button type="submit">Pay Now</button>
++            </form>
+       requestBody:
+         required: true
+         content:
+           application/x-www-form-urlencoded:
+             schema:
+-              $ref: '#/components/schemas/CreditCardPaymentUIRequest'
++              oneOf:
++                - $ref: '#/components/schemas/CreditCardUIRequest'
++                - $ref: '#/components/schemas/CreditCertificationUIRequest'
+       responses:
+         '200':
+-          description: Returns HTML form for redirect to payment page
++          description: |
++            Returns HTML form for redirect to payment page.
++            If the transaction requires 3D Secure authentication, it returns XML directly.
+           content:
+             text/html:
+               schema:
+                 type: string
++            application/xml:
++              schema:
++                $ref: '#/components/schemas/TranactionResponse3DS'
++              examples:
++                credit_card_success:
++                  summary: "[Credit Card Payment] 3D Secure Response"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <TranactionResponse>
++                        <ref>ORD20240122001</ref>
++                        <transNo>20241129114040</transNo>
++                        <resultCode>000</resultCode>
++                        <resultMsg>Success</resultMsg>
++                        <transTime>20241129114040</transTime>
++                        <refererUrl>https://pay.pcins.co.kr/referer...</refererUrl>
++                        <checkoutUrl>https://pay.pcins.co.kr/checkout...</checkoutUrl>
++                        <approvalNo></approvalNo>
++                    </TranactionResponse>
++                credit_certification_success:
++                  summary: "[Credit Certification] 3D Secure Response"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <TranactionResponse>
++                        <ref>CERT20240122001</ref>
++                        <transNo>20241129114055</transNo>
++                        <resultCode>000</resultCode>
++                        <resultMsg>Success</resultMsg>
++                        <transTime>20241129114055</transTime>
++                        <refererUrl>https://pay.pcins.co.kr/referer...</refererUrl>
++                        <checkoutUrl>https://pay.pcins.co.kr/checkout...</checkoutUrl>
++                        <approvalNo></approvalNo>
++                    </TranactionResponse>
+ 
+-  /qr_link.jsp:
++  /pay_external.jsp:
+     post:
+       tags:
+-        - QR Payment
+-      summary: QR Payment (UI)
++        - API Endpoints
++      summary: External UI Payment (3DS)
+       description: |
+-        Generates QR code for Alipay/Wechatpay payment.
++        External payment page with 3D Secure authentication support.
++        This endpoint is required for **VAN36** and **VAN37** 3DS payments.
+         
+-        ## Flow
+-        1. Merchant sends form POST to qr_link.jsp
+-        2. User redirected to QR payment page
+-        3. User scans QR code with mobile app
+-        4. Payment completed and result returned
+-      operationId: qrPaymentUI
++        ## Return payment results callback
++        - **Success Callback:** `callbackURL?merchantId={id}&ref={ref}&payId={payId}&currType={cur}&price={price}&transNo={transNo}&transCode=AS`
++        - **Success Return:** `returnURL?transCode=AS&transNo={transNo}&ref={ref}`
++        - **Failure Return:** `returnURL?transCode=AF&transNo={transNo}&ref={ref}&errCode={errCode}`
++      operationId: externalUIPayment
++      x-codeSamples:
++        - lang: HTML
++          label: HTML Form
++          source: |
++            <!-- Content-Type: application/x-www-form-urlencoded -->
++            <form method="POST" action="https://pay.pcins.co.kr/gw/pay_external.jsp">
++              <input type="hidden" name="merchantId" value="MERCHANT001">
++              <input type="hidden" name="merchantPwd" value="password123">
++              <input type="hidden" name="ref" value="ORD20240122001">
++              <input type="hidden" name="tradeGubun" value="1">
++              <input type="hidden" name="currType" value="JPY">
++              <input type="hidden" name="cardType" value="VIS">
++              <input type="hidden" name="price" value="2000">
++              <input type="hidden" name="payName" value="John Doe">
++              <input type="hidden" name="payId" value="customer123">
++              <input type="hidden" name="productName" value="Test Product">
++              <input type="hidden" name="payEmail" value="john@example.com">
++              <input type="hidden" name="payTel" value="090-1234-5678">
++              <input type="hidden" name="callbackURL" value="https://your-site.com/callback">
++              <input type="hidden" name="returnURL" value="https://your-site.com/return">
++              <button type="submit">Pay with 3DS</button>
++            </form>
+       requestBody:
+         required: true
+         content:
+           application/x-www-form-urlencoded:
+             schema:
+-              $ref: '#/components/schemas/QRPaymentUIRequest'
++              $ref: '#/components/schemas/ExternalUIRequest'
+       responses:
+         '200':
+-          description: Returns QR payment page
++          description: JavaScript redirect or error response
+           content:
+-            text/html:
++            application/xml:
+               schema:
+-                type: string
++                oneOf:
++                  - $ref: '#/components/schemas/JavascriptRedirectResponse'
++                  - $ref: '#/components/schemas/ErrorResponse'
++              examples:
++                success:
++                  summary: "[External 3DS] JS Redirect Success"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <script>
++                         window.location.href='External UI Payment URL';
++                    </script>
++                failure:
++                  summary: "[Error] Payment Failure"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8"?>
++                    <ErrorResponse>
++                        <responseType>ERROR</responseType>
++                        <ref>ORD20240122001</ref>
++                        <transNo>2025071002003GG3AK</transNo>
++                        <resultCode>935</resultCode>
++                        <resultMsg>Acquirer decline.</resultMsg>
++                        <approvalNo></approvalNo>
++                    </ErrorResponse>
+ 
+-  /pay_request.jsp:
++  /pay_direct3ds.jsp:
+     post:
+       tags:
+-        - Non-UI Payment
+-        - Transaction
+-      summary: Credit Card Payment, Speed Payment, Refund & Transaction Inquiry (Non-UI)
++        - API Endpoints
++      summary: Direct 3DS Payment (UI)
+       description: |
+-        Direct API payment processing, speed payment, refunds, and transaction inquiry.
+-        Use tradeGubun parameter to specify operation:
+-        - tradeGubun=1: Credit Card Payment
+-        - tradeGubun=1 with special cardNo: Speed Payment  
+-        - tradeGubun=2: Refund
+-        - tradeGubun=9: Transaction Inquiry
+-      operationId: directPaymentAPI
++        Direct 3D Secure payment with card info submitted directly.
++        This endpoint is required for **VAN22(PCINS HR)**.
++        
++        ## Return payment results callback
++        - **Success Callback:** `callbackURL?merchantId={id}&ref={ref}&payId={payId}&currType={cur}&price={price}&transNo={transNo}&transCode=AS`
++        - **Success Return:** `returnURL?transCode=AS&transNo={transNo}&ref={ref}`
++        - **Failure Return:** `returnURL?transCode=AF&transNo={transNo}&ref={ref}&errCode={errCode}`
++        
++        ## City Code Reference (3166-2:JP)
++        Use the numeric code for the `cityCode` parameter:
++        `1: HOKKAIDO`, `2: AOMORI`, `3: IWATE`, `4: MIYAGI`, `5: AKITA`, `6: YAMAGATA`, `7: FUKUSHIMA`, `8: IBARAKI`, `9: TOCHIGI`, `10: GUNMA`, `11: SAITAMA`, `12: CHIBA`, `13: TOKYO`, `14: KANAGAWA`, `15: NIIGATA`, `16: TOYAMA`, `17: ISHIKAWA`, `18: FUKUI`, `19: YAMANASHI`, `20: NAGANO`, `21: GIFU`, `22: SHIZUOKA`, `23: AICHI`, `24: MIE`, `25: SHIGA`, `26: KYOTO`, `27: OSAKA`, `28: HYOGO`, `29: NARA`, `30: WAKAYAMA`, `31: TOTTORI`, `32: SHIMANE`, `33: OKAYAMA`, `34: HIROSHIMA`, `35: YAMAGUCHI`, `36: TOKUSHIMA`, `37: KAGAWA`, `38: EHIME`, `39: KOCHI`, `40: FUKUOKA`, `41: SAGA`, `42: NAGASAKI`, `43: KUMAMOTO`, `44: OITA`, `45: MIYAZAKI`, `46: KAGOSHIMA`, `47: OKINAWA`
++      operationId: direct3DSPayment
++      x-codeSamples:
++        - lang: HTML
++          label: HTML Form
++          source: |
++            <!-- Content-Type: application/x-www-form-urlencoded -->
++            <form method="POST" action="https://pay.pcins.co.kr/gw/pay_direct3ds.jsp">
++              <input type="hidden" name="merchantId" value="MERCHANT001">
++              <input type="hidden" name="merchantPwd" value="password123">
++              <input type="hidden" name="ref" value="ORD20240122001">
++              <input type="hidden" name="tradeGubun" value="1">
++              <input type="hidden" name="currType" value="JPY">
++              <input type="hidden" name="cardType" value="VIS">
++              <input type="hidden" name="cardNo" value="4111111111111111">
++              <input type="hidden" name="expireM" value="12">
++              <input type="hidden" name="expireY" value="25">
++              <input type="hidden" name="csc" value="123">
++              <input type="hidden" name="price" value="2000">
++              <input type="hidden" name="payName" value="John Doe">
++              <input type="hidden" name="payId" value="customer123">
++              <input type="hidden" name="productName" value="Test Product">
++              <input type="hidden" name="payEmail" value="john@example.com">
++              <input type="hidden" name="payTel" value="090-1234-5678">
++              <input type="hidden" name="address" value="Tokyo Minato-ku">
++              <input type="hidden" name="cityCode" value="13">
++              <input type="hidden" name="postCode" value="100-0001">
++              <input type="hidden" name="callbackURL" value="https://your-site.com/callback">
++              <input type="hidden" name="returnURL" value="https://your-site.com/return">
++              <button type="submit">Direct 3DS Pay</button>
++            </form>
+       requestBody:
+         required: true
+         content:
+           application/x-www-form-urlencoded:
+             schema:
+-              $ref: '#/components/schemas/DirectPaymentRequest'
++              $ref: '#/components/schemas/Direct3DSRequest'
+       responses:
+         '200':
+-          description: XML response with transaction result
++          description: JavaScript redirect or transaction result
+           content:
+             application/xml:
+               schema:
+-                $ref: '#/components/schemas/TransactionResponse'
++                oneOf:
++                  - $ref: '#/components/schemas/JavascriptRedirectResponse'
++                  - $ref: '#/components/schemas/Direct3DSNoAuthResponse'
++                  - $ref: '#/components/schemas/ErrorResponse'
++              examples:
++                success:
++                  summary: "[With 3DS Auth] Redirect Success"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <script>
++                         window.location.href='Direct 3DS Payment URL';
++                    </script>
++                success_no_auth:
++                  summary: "[Without 3DS Auth] Direct Success"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <tranactionresponse>
++                        <responsetype>SUCCESS</responsetype>
++                        <ref>ORD20240122001</ref>
++                        <transno>2025112102013C74KO</transno>
++                        <transstate>A</transstate>
++                        <resultcode>000</resultcode>
++                        <resultmsg>success</resultmsg>
++                        <transtime>20251121151442</transtime>
++                        <externalurl>null</externalurl>
++                    </tranactionresponse>
++                error_response:
++                  summary: "[Error] Payment Failure"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8"?>
++                    <ErrorResponse>
++                        <responseType>ERROR</responseType>
++                        <ref>ORD20240122001</ref>
++                        <transNo>2025071002003GG3AK</transNo>
++                        <resultCode>935</resultCode>
++                        <resultMsg>Acquirer decline.</resultMsg>
++                        <approvalNo></approvalNo>
++                    </ErrorResponse>
+ 
+-  /pay_3ds_status_check.jsp:
++  /qr_link.jsp:
+     post:
+       tags:
+-        - 3D Secure
+-        - Non-UI Payment
+-      summary: Payment Result Notification (Non-UI)
++        - API Endpoints
++      summary: QR Payment (UI)
+       description: |
+-        Webhook endpoint to receive 3DS payment result notification.
+-        This is called after 3DS authentication is completed.
+-      operationId: paymentResultNotification
++        Generates QR code for Alipay/Wechatpay payment.
++        
++        ## Flow
++        1. Merchant sends form POST to qr_link.jsp
++        2. User redirected to QR payment page
++        3. User scans QR code with mobile app
++        4. Payment completed and result returned
++      operationId: qrPaymentUI
++      x-codeSamples:
++        - lang: HTML
++          label: HTML Form
++          source: |
++            <!-- Content-Type: application/x-www-form-urlencoded -->
++            <form method="POST" action="https://pay.pcins.co.kr/gw/qr_link.jsp">
++              <input type="hidden" name="ver" value="100">
++              <input type="hidden" name="merchantId" value="MERCHANT001">
++              <input type="hidden" name="merchantPwd" value="password123">
++              <input type="hidden" name="ref" value="ORD20240122001">
++              <input type="hidden" name="tradeGubun" value="1">
++              <input type="hidden" name="currType" value="CNY">
++              <input type="hidden" name="price" value="2000">
++              <input type="hidden" name="payName" value="John Doe">
++              <input type="hidden" name="payId" value="customer123">
++              <input type="hidden" name="payEmail" value="john@example.com">
++              <input type="hidden" name="payTel" value="090-1234-5678">
++              <input type="hidden" name="productName" value="Test Product">
++              <input type="hidden" name="referURL" value="https://your-site.com/order">
++              <input type="hidden" name="returnURL" value="https://your-site.com/return">
++              <input type="hidden" name="lang" value="EN">
++              <button type="submit">Generate QR</button>
++            </form>
+       requestBody:
+         required: true
+         content:
+           application/x-www-form-urlencoded:
+             schema:
+-              $ref: '#/components/schemas/PaymentNotificationRequest'
++              $ref: '#/components/schemas/QRPaymentUIRequest'
+       responses:
+         '200':
+-          description: Notification received successfully
++          description: Returns QR payment page
+           content:
+-            application/xml:
++            text/html:
+               schema:
+-                $ref: '#/components/schemas/TransactionResponse'
++                type: string
+ 
+-  /pay_external.jsp:
++  /pay_request.jsp:
+     post:
+       tags:
+-        - UI Payment
+-        - 3D Secure
+-      summary: External UI Payment (3DS)
++        - API Endpoints
++      summary: Credit Card Payment, Speed Payment, Refund & Transaction Inquiry (Non-UI)
+       description: |
+-        External payment page with 3D Secure authentication support for VAN36/VAN37.
+-        Returns JavaScript redirect to external payment URL.
+-      operationId: externalUIPayment
++        Direct API payment processing, speed payment, refunds, and transaction inquiry.
++        Use tradeGubun parameter to specify operation:
++        - tradeGubun=1: Credit Card Payment
++        - tradeGubun=1 with special cardNo (8888...): Speed Payment  
++        - tradeGubun=2: Refund
++        - tradeGubun=9: Transaction Inquiry
++      operationId: directPaymentAPI
++      x-codeSamples:
++        - lang: HTML
++          label: HTML Form (Credit Card)
++          source: |
++            <!-- Content-Type: application/x-www-form-urlencoded -->
++            <form method="POST" action="https://pay.pcins.co.kr/gw/pay_request.jsp">
++              <input type="hidden" name="ver" value="100">
++              <input type="hidden" name="merchantId" value="MERCHANT001">
++              <input type="hidden" name="merchantPwd" value="password123">
++              <input type="hidden" name="ref" value="ORD20240122001">
++              <input type="hidden" name="tradeGubun" value="1">
++              <input type="hidden" name="cardNo" value="4111111111111111">
++              <input type="hidden" name="expireM" value="12">
++              <input type="hidden" name="expireY" value="25">
++              <input type="hidden" name="csc" value="123">
++              <input type="hidden" name="currType" value="JPY">
++              <input type="hidden" name="price" value="2000">
++              <input type="hidden" name="payName" value="John Doe">
++              <input type="hidden" name="payId" value="customer123">
++              <input type="hidden" name="payEmail" value="john@example.com">
++              <input type="hidden" name="payTel" value="090-1234-5678">
++              <input type="hidden" name="productName" value="Test Product">
++              <input type="hidden" name="returnURL" value="https://your-site.com/return">
++              <input type="hidden" name="callbackURL" value="https://your-site.com/callback">
++              <button type="submit">Submit Request</button>
++            </form>
++        - lang: HTML
++          label: HTML Form (Speed Payment)
++          source: |
++            <!-- Content-Type: application/x-www-form-urlencoded -->
++            <form method="POST" action="https://pay.pcins.co.kr/gw/pay_request.jsp">
++              <input type="hidden" name="ver" value="100">
++              <input type="hidden" name="merchantId" value="MERCHANT001">
++              <input type="hidden" name="merchantPwd" value="password123">
++              <input type="hidden" name="ref" value="ORD20240122001">
++              <input type="hidden" name="tradeGubun" value="1">
++              <input type="hidden" name="cardNo" value="8888888888888882">
++              <input type="hidden" name="expireM" value="00">
++              <input type="hidden" name="expireY" value="00">
++              <input type="hidden" name="currType" value="JPY">
++              <input type="hidden" name="price" value="2000">
++              <input type="hidden" name="payId" value="customer123">
++              <input type="hidden" name="payEmail" value="john@example.com">
++              <input type="hidden" name="payTel" value="090-1234-5678">
++              <input type="hidden" name="productName" value="Test Product">
++              <button type="submit">Submit Request</button>
++            </form>
++        - lang: HTML
++          label: HTML Form (Inquiry)
++          source: |
++            <!-- Content-Type: application/x-www-form-urlencoded -->
++            <form method="POST" action="https://pay.pcins.co.kr/gw/pay_request.jsp">
++              <input type="hidden" name="ver" value="100">
++              <input type="hidden" name="merchantId" value="MERCHANT001">
++              <input type="hidden" name="merchantPwd" value="password123">
++              <input type="hidden" name="ref" value="ORD20240122001">
++              <input type="hidden" name="tradeGubun" value="9">
++              <input type="hidden" name="currType" value="JPY">
++              <input type="hidden" name="price" value="2000">
++              <button type="submit">Submit Request</button>
++            </form>
+       requestBody:
+         required: true
+         content:
+           application/x-www-form-urlencoded:
+             schema:
+-              $ref: '#/components/schemas/ExternalUIPaymentRequest'
++              oneOf:
++                - $ref: '#/components/schemas/CreditCardNonUIRequest'
++                - $ref: '#/components/schemas/SpeedPaymentNonUIRequest'
++                - $ref: '#/components/schemas/TransactionInquiryRequest'
++                - $ref: '#/components/schemas/RefundRequest'
+       responses:
+         '200':
+-          description: JavaScript redirect or error response
++          description: XML response with transaction result
+           content:
+             application/xml:
+               schema:
+                 oneOf:
+-                  - $ref: '#/components/schemas/JavascriptRedirectResponse'
++                  - $ref: '#/components/schemas/TransactionResponse'
+                   - $ref: '#/components/schemas/ErrorResponse'
++              examples:
++                cc_success:
++                  summary: "[Credit Card] Payment Success"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <TransactionResponse>
++                        <ref>ORD20240122001</ref>
++                        <transNo>20120815000012</transNo>
++                        <resultCode>000</resultCode>
++                        <resultMsg>Success</resultMsg>
++                        <transTime>20120815095629</transTime>
++                        <approvalNo>303577</approvalNo>
++                    </TransactionResponse>
++                speed_success:
++                  summary: "[Speed Payment] Payment Success"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <TransactionResponse>
++                        <ref>ORD20240122002</ref>
++                        <transNo>20120815000015</transNo>
++                        <resultCode>000</resultCode>
++                        <resultMsg>Success</resultMsg>
++                        <transTime>20120815101010</transTime>
++                        <approvalNo>303588</approvalNo>
++                    </TransactionResponse>
++                refund_success:
++                  summary: "[Refund] Refund Success"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <TransactionResponse>
++                        <ref>ORD20240122001</ref>
++                        <transNo>20120815000012</transNo>
++                        <resultCode>000</resultCode>
++                        <resultMsg>Refund Success</resultMsg>
++                        <transTime>20120815112233</transTime>
++                        <approvalNo>303577</approvalNo>
++                    </TransactionResponse>
++                inquiry_success:
++                  summary: "[Inquiry] Transaction Details"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <TransactionResponse>
++                        <ref>ORD20240122001</ref>
++                        <transNo>20120815000012</transNo>
++                        <resultCode>000</resultCode>
++                        <resultMsg>Success</resultMsg>
++                        <transTime>20120815095629</transTime>
++                        <transStatus>1</transStatus>
++                        <approvalNo>303577</approvalNo>
++                    </TransactionResponse>
++                general_failure:
++                  summary: "[Error] General Failure"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <TransactionResponse>
++                        <ref>ORD20240122001</ref>
++                        <transNo>20120815000012</transNo>
++                        <resultCode>923</resultCode>
++                        <resultMsg>Card number mismatch</resultMsg>
++                        <transTime>20120815095629</transTime>
++                        <approvalNo></approvalNo>
++                    </TransactionResponse>
++                validation_error:
++                  summary: "[Error] Validation Missing Field"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <ErrorResponse>
++                        <ref></ref>
++                        <transNo></transNo>
++                        <resultCode>916</resultCode>
++                        <resultMsg>Order number was not entered.</resultMsg>
++                        <approvalNo></approvalNo>
++                    </ErrorResponse>
+ 
+-  /pay_direct3ds.jsp:
++
++  /pay_3ds_status_check.jsp:
+     post:
+       tags:
+-        - UI Payment
+-        - 3D Secure
+-      summary: Direct 3DS Payment (UI)
++        - API Endpoints
++      summary: Payment Result Notification (Non-UI)
+       description: |
+-        Direct 3D Secure payment with card info submitted directly for VAN22.
+-        Requires cardholder address for 3DS verification.
+-      operationId: direct3DSPayment
++        Webhook or API endpoint to receive 3DS payment result notification.
++      operationId: paymentResultNotification
++      x-codeSamples:
++        - lang: HTML
++          label: HTML Form (Notification Input)
++          source: |
++            <!-- Content-Type: application/x-www-form-urlencoded -->
++            <form method="POST" action="https://pay.pcins.co.kr/gw/pay_3ds_status_check.jsp">
++              <input type="hidden" name="ver" value="100">
++              <input type="hidden" name="merchantId" value="Merchant ID">
++              <input type="hidden" name="merchantPwd" value="Merchant password">
++              <input type="hidden" name="transNo" value="Transaction Number">
++              <input type="hidden" name="checkoutId" value="VAN Transaction ID">
++              <input type="hidden" name="cardNo" value="Card number">
++              <input type="hidden" name="expireM" value="00">
++              <input type="hidden" name="expireY" value="00">
++              <input type="hidden" name="csc" value="777">
++              <input type="hidden" name="payName" value="Buyer name">
++              <button type="submit">Submit Request</button>
++            </form>
+       requestBody:
+         required: true
+         content:
+           application/x-www-form-urlencoded:
+             schema:
+-              $ref: '#/components/schemas/Direct3DSRequest'
++              $ref: '#/components/schemas/PaymentNotificationRequest'
+       responses:
+         '200':
+-          description: JavaScript redirect or transaction result
++          description: Notification received successfully
+           content:
+             application/xml:
+               schema:
+                 oneOf:
+-                  - $ref: '#/components/schemas/JavascriptRedirectResponse'
+-                  - $ref: '#/components/schemas/Direct3DSResponse'
++                  - $ref: '#/components/schemas/TransactionResponse'
++                  - $ref: '#/components/schemas/ErrorResponse'
++              examples:
++                success:
++                  summary: "[Success] Response"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?> 
++                    <TransactionResponse>
++                        <transNo>20241115000012</transNo> 
++                        <resultCode>000</resultCode> 
++                        <resultMsg>Transaction Successed</resultMsg> 
++                        <transTime>20241115095629</transTime> 
++                        <approvalNo>303577</approvalNo> 
++                    </TransactionResponse>
++                failure:
++                  summary: "[Failure] Missing ID Error"
++                  value: |
++                    <?xml version="1.0" encoding="UTF-8" ?>
++                    <ErrorResponse>
++                        <ref></ref>
++                        <transNo></transNo>
++                        <resultCode>916</resultCode>
++                        <resultMsg>?좂썯佯뾋D?믣뀯?쎼걮?╉걦?졼걬?꾠?/resultMsg>
++                        <approvalNo></approvalNo>
++                    </ErrorResponse>
+ 
+ components:
+   schemas:
+     # ======================
+     # Request Schemas
+     # ======================
+-    
+-    CreditCardPaymentUIRequest:
++    CreditCardUIRequest:
+       type: object
+-      required:
+-        - ver
+-        - merchantId
+-        - ref
+-        - tradeGubun
+-        - currType
+-        - price
+-        - payEmail
+-        - payTel
+-        - productName
+-        - returnURL
+-        - callbackURL
++      required: [merchantId, ref, tradeGubun, currType, price, payEmail, payTel, productName, returnURL, callbackURL]
+       properties:
+-        ver:
+-          type: string
+-          description: Interface version (always "100")
+-          example: "100"
+-        merchantId:
+-          type: string
+-          description: Merchant ID issued by PCINS
+-          example: "MERCHANT001"
+-        merchantPwd:
+-          type: string
+-          description: Merchant password (required for 3DS)
+-        ref:
+-          type: string
+-          description: Merchant transaction number (order number)
+-          example: "ORD20240122001"
+-        tradeGubun:
+-          type: string
+-          description: Transaction type (1=Payment, 7=Certification)
+-          enum:
+-            - "1"
+-            - "7"
+-          example: "1"
+-        currType:
+-          type: string
+-          description: Transaction currency
+-          enum:
+-            - JPY
+-            - USD
+-            - EUR
+-            - KRW
+-          example: "JPY"
+-        price:
+-          type: number
+-          description: Transaction amount (0 for certification)
+-          example: 2000
+-        payName:
+-          type: string
+-          description: Buyer name (English)
+-        payId:
+-          type: string
+-          description: Buyer ID
+-        payEmail:
+-          type: string
+-          description: Buyer email address
+-          format: email
+-        payTel:
+-          type: string
+-          description: Buyer phone number
+-        productName:
+-          type: string
+-          description: Product name
+-        returnURL:
+-          type: string
+-          description: URL to redirect after completion
+-          format: uri
+-        callbackURL:
+-          type: string
+-          description: URL to receive payment result notification (POST)
+-          format: uri
+-        transNo:
+-          type: string
+-          description: Transaction number (for refund/void)
+-        cardType:
+-          type: string
+-          description: Card type code (required for 3DS)
+-          enum:
+-            - AMX
+-            - JCB
+-            - MSC
+-            - VIS
++        merchantId: { type: string }
++        merchantPwd: { type: string, description: "Required for 3DS authentication" }
++        ref: { type: string }
++        tradeGubun: { type: string, example: "1" }
++        currType: { type: string }
++        price: { type: number }
++        payName: { type: string }
++        payId: { type: string }
++        payEmail: { type: string }
++        payTel: { type: string }
++        productName: { type: string }
++        returnURL: { type: string }
++        callbackURL: { type: string }
++        transNo: { type: string }
++        errCode: { type: string }
++        cardType: { type: string, description: "Required for 3DS authentication" }
+ 
+-    QRPaymentUIRequest:
++    CreditCertificationUIRequest:
+       type: object
+-      required:
+-        - ver
+-        - merchantId
+-        - ref
+-        - tradeGubun
+-        - currType
+-        - price
+-        - payName
+-        - payId
+-        - payEmail
+-        - payTel
+-        - productName
+-        - referURL
+-        - returnURL
++      required: [merchantId, ref, tradeGubun, currType, price, payEmail, payTel, returnURL, callbackURL]
+       properties:
+-        ver:
+-          type: string
+-          description: Interface version (always "100")
+-          example: "100"
+-        merchantId:
+-          type: string
+-          description: Merchant ID
+-        merchantPwd:
+-          type: string
+-          description: Merchant password (conditional)
+-        ref:
+-          type: string
+-          description: Merchant transaction number
+-        tradeGubun:
+-          type: string
+-          description: Transaction type (1=Sale)
+-          enum:
+-            - "1"
+-        currType:
+-          type: string
+-          description: Transaction currency (CNY for QR payments)
+-          enum:
+-            - CNY
+-            - JPY
+-            - USD
+-            - EUR
+-            - KRW
+-          example: "CNY"
+-        price:
+-          type: number
+-          description: Transaction amount
+-          example: 2000
+-        payName:
+-          type: string
+-          description: Buyer name
+-        payId:
+-          type: string
+-          description: Buyer ID
+-        payEmail:
+-          type: string
+-          description: Buyer email
+-        payTel:
+-          type: string
+-          description: Buyer phone number
+-        productName:
+-          type: string
+-          description: Product name
+-        referURL:
+-          type: string
+-          description: Refer URL
+-          format: uri
+-        returnURL:
+-          type: string
+-          description: Return URL
+-          format: uri
+-        lang:
+-          type: string
+-          description: Language code
+-          enum:
+-            - JP
+-            - EN
+-            - CN
+-
+-    DirectPaymentRequest:
++        merchantId: { type: string }
++        ref: { type: string }
++        tradeGubun: { type: string, example: "7" }
++        currType: { type: string }
++        price: { type: number, example: 0 }
++        payId: { type: string }
++        payEmail: { type: string }
++        payTel: { type: string }
++        productName: { type: string }
++        returnURL: { type: string }
++        callbackURL: { type: string }
++
++    ExternalUIRequest:
+       type: object
+-      required:
+-        - ver
+-        - merchantId
+-        - merchantPwd
+-        - ref
+-        - tradeGubun
+-        - currType
+-        - price
++      required: [merchantId, merchantPwd, ref, tradeGubun, currType, cardType, price, payName, payId, productName, payEmail, payTel]
+       properties:
+-        ver:
+-          type: string
+-          description: Interface version (always "100")
+-          example: "100"
+-        merchantId:
+-          type: string
+-          description: Merchant ID
+-        merchantPwd:
+-          type: string
+-          description: Merchant password
+-        ref:
+-          type: string
+-          description: Merchant transaction number
+-        tradeGubun:
+-          type: string
+-          description: |
+-            Transaction type
+-            - "1": Credit Card Payment / Speed Payment
+-            - "2": Refund
+-            - "9": Transaction Inquiry
+-          enum:
+-            - "1"
+-            - "2"
+-            - "9"
+-        cardNo:
+-          type: string
+-          description: |
+-            Card number (16 digits) OR special values for speed payment:
+-            - 8888888888888888: Search by merchantId + phone + payId
+-            - 8888888888888881: Search by merchantId + phone
+-            - 8888888888888882: Search by merchantId + payId
+-          pattern: '^[0-9]{16}$|^888888888888888[0-9]$'
+-        expireM:
+-          type: string
+-          description: Card expiration month (MM) - 00 for speed payment
+-          pattern: '^(0[1-9]|1[0-2]|00)$'
+-        expireY:
+-          type: string
+-          description: Card expiration year (YY) - 00 for speed payment
+-          pattern: '^[0-9]{2}$'
+-        csc:
+-          type: string
+-          description: Card security code (CVV)
+-          pattern: '^[0-9]{3,4}$'
+-        currType:
+-          type: string
+-          description: Currency code
+-          enum:
+-            - JPY
+-            - USD
+-            - EUR
+-            - KRW
+-        price:
+-          type: number
+-          description: Transaction amount
+-        payName:
+-          type: string
+-          description: Cardholder name (English) - required for payment
+-        payId:
+-          type: string
+-          description: Buyer ID - required for speed payment
+-        payEmail:
+-          type: string
+-          description: Buyer email - required for payment
+-        payTel:
+-          type: string
+-          description: Buyer phone number - required for payment/speed payment
+-        productName:
+-          type: string
+-          description: Product name
+-        transNo:
+-          type: string
+-          description: Original transaction number (required for refund)
+-        returnURL:
+-          type: string
+-          description: Return URL
+-        callbackURL:
+-          type: string
+-          description: Callback URL
++        merchantId: { type: string }
++        merchantPwd: { type: string }
++        ref: { type: string }
++        tradeGubun: { type: string }
++        currType: { type: string }
++        cardType: { type: string }
++        price: { type: number }
++        payName: { type: string }
++        payId: { type: string }
++        productName: { type: string }
++        payEmail: { type: string }
++        payTel: { type: string }
++        callbackURL: { type: string }
++        returnURL: { type: string }
+ 
+-    PaymentNotificationRequest:
++    Direct3DSRequest:
+       type: object
+-      required:
+-        - ver
+-        - merchantId
+-        - merchantPwd
+-        - transNo
+-        - checkoutId
+-        - cardNo
+-        - expireM
+-        - expireY
+-        - csc
+-        - payName
++      required: [merchantId, merchantPwd, ref, tradeGubun, currType, cardType, cardNo, expireM, expireY, csc, price, payName, payId, productName, payEmail, payTel, address, cityCode, postCode]
+       properties:
+-        ver:
+-          type: string
+-          description: Interface version
+-          example: "100"
+-        merchantId:
+-          type: string
+-          description: Merchant ID
+-        merchantPwd:
+-          type: string
+-          description: Merchant password
+-        transNo:
+-          type: string
+-          description: Transaction number from 3DS payment
+-        checkoutId:
+-          type: string
+-          description: VAN Transaction ID
+-        cardNo:
+-          type: string
+-          description: Card number
+-        expireM:
+-          type: string
+-          description: Expiration month
+-        expireY:
+-          type: string
+-          description: Expiration year
+-        csc:
+-          type: string
+-          description: Security code
+-        payName:
+-          type: string
+-          description: Buyer name
+-
+-    ExternalUIPaymentRequest:
++        merchantId: { type: string }
++        merchantPwd: { type: string }
++        ref: { type: string }
++        tradeGubun: { type: string }
++        currType: { type: string }
++        cardType: { type: string }
++        cardNo: { type: string }
++        expireM: { type: string }
++        expireY: { type: string }
++        csc: { type: string }
++        price: { type: number }
++        payName: { type: string }
++        payId: { type: string }
++        productName: { type: string }
++        payEmail: { type: string }
++        payTel: { type: string }
++        address: { type: string }
++        cityCode: { type: string }
++        postCode: { type: string }
++        callbackURL: { type: string }
++        returnURL: { type: string }
++
++    QRPaymentUIRequest:
+       type: object
+-      required:
+-        - merchantId
+-        - merchantPwd
+-        - ref
+-        - tradeGubun
+-        - currType
+-        - cardType
+-        - price
+-        - payName
+-        - payId
+-        - productName
+-        - payEmail
+-        - payTel
++      required: [merchantId, ref, tradeGubun, currType, price, payName, payId, payEmail, payTel, productName, referURL, returnURL]
+       properties:
+-        merchantId:
+-          type: string
+-          description: Merchant ID
+-        merchantPwd:
+-          type: string
+-          description: Merchant password
+-        ref:
+-          type: string
+-          description: Merchant transaction number
+-        tradeGubun:
+-          type: string
+-          description: Transaction type
+-          enum:
+-            - "1"
+-        currType:
+-          type: string
+-          description: Currency code
+-          enum:
+-            - JPY
+-            - USD
+-            - EUR
+-            - KRW
+-        cardType:
+-          type: string
+-          description: Card type code
+-          enum:
+-            - AMX
+-            - JCB
+-            - MSC
+-            - VIS
+-        price:
+-          type: number
+-          description: Transaction amount
+-        payName:
+-          type: string
+-          description: Buyer name
+-        payId:
+-          type: string
+-          description: Buyer ID
+-        productName:
+-          type: string
+-          description: Product name
+-        payEmail:
+-          type: string
+-          description: Buyer email
+-        payTel:
+-          type: string
+-          description: Buyer phone number
+-        callbackURL:
+-          type: string
+-          description: Callback URL
+-        returnURL:
+-          type: string
+-          description: Return URL
++        merchantId: { type: string }
++        merchantPwd: { type: string }
++        ref: { type: string }
++        tradeGubun: { type: string }
++        currType: { type: string }
++        price: { type: number }
++        payName: { type: string }
++        payId: { type: string }
++        payEmail: { type: string }
++        payTel: { type: string }
++        productName: { type: string }
++        referURL: { type: string }
++        returnURL: { type: string }
++        lang: { type: string }
+ 
+-    Direct3DSRequest:
++    CreditCardNonUIRequest:
+       type: object
+-      required:
+-        - merchantId
+-        - merchantPwd
+-        - ref
+-        - tradeGubun
+-        - currType
+-        - cardType
+-        - cardNo
+-        - expireM
+-        - expireY
+-        - csc
+-        - price
+-        - payName
+-        - payId
+-        - productName
+-        - payEmail
+-        - payTel
+-        - address
+-        - cityCode
+-        - postCode
++      required: [ver, merchantId, merchantPwd, ref, tradeGubun, cardNo, expireM, expireY, currType, price, payName, payEmail, payTel]
+       properties:
+-        merchantId:
+-          type: string
+-          description: Merchant ID
+-        merchantPwd:
+-          type: string
+-          description: Merchant password
+-        ref:
+-          type: string
+-          description: Merchant transaction number
+-        tradeGubun:
+-          type: string
+-          description: Transaction type
+-          enum:
+-            - "1"
+-        currType:
+-          type: string
+-          description: Currency code
+-          enum:
+-            - JPY
+-            - USD
+-            - EUR
+-            - KRW
+-        cardType:
+-          type: string
+-          description: Card type code
+-          enum:
+-            - AMX
+-            - JCB
+-            - MSC
+-            - VIS
+-        cardNo:
+-          type: string
+-          description: Card number (16 digits)
+-        expireM:
+-          type: string
+-          description: Expiration month (MM)
+-        expireY:
+-          type: string
+-          description: Expiration year (YY)
+-        csc:
+-          type: string
+-          description: Security code
+-        price:
+-          type: number
+-          description: Transaction amount
+-        payName:
+-          type: string
+-          description: Cardholder name
+-        payId:
+-          type: string
+-          description: Buyer ID
+-        productName:
+-          type: string
+-          description: Product name
+-        payEmail:
+-          type: string
+-          description: Buyer email
+-        payTel:
+-          type: string
+-          description: Buyer phone number
+-        address:
+-          type: string
+-          description: Customer address (required for 3DS)
+-        cityCode:
+-          type: string
+-          description: |
+-            ISO-3166 state/province code (for Japan)
+-            | Code | Prefecture |
+-            |------|------------|
+-            | 1 | HOKKAIDO |
+-            | 2 | AOMORI |
+-            | ... | ... |
+-            | 13 | TOKYO |
+-            | ... | ... |
+-            | 47 | OKINAWA |
+-        postCode:
+-          type: string
+-          description: Post code
+-        callbackURL:
+-          type: string
+-          description: Callback URL
+-        returnURL:
+-          type: string
+-          description: Return URL
++        ver: { type: string, example: "100" }
++        merchantId: { type: string }
++        merchantPwd: { type: string }
++        ref: { type: string }
++        tradeGubun: { type: string, example: "1" }
++        cardNo: { type: string }
++        expireM: { type: string }
++        expireY: { type: string }
++        csc: { type: string }
++        currType: { type: string }
++        price: { type: number }
++        payName: { type: string }
++        payId: { type: string }
++        payEmail: { type: string }
++        payTel: { type: string }
++        productName: { type: string }
++        returnURL: { type: string }
++        callbackURL: { type: string }
+ 
+-    # ======================
+-    # Response Schemas
+-    # ======================
+-
+-    TransactionResponse:
++    SpeedPaymentNonUIRequest:
+       type: object
++      required: [ver, merchantId, merchantPwd, ref, tradeGubun, cardNo, expireM, expireY, currType, price, payId]
+       properties:
+-        ref:
+-          type: string
+-          description: Merchant transaction number
+-        transNo:
+-          type: string
+-          description: PCINS transaction number
+-        resultCode:
+-          type: string
+-          description: Result code (000=Success)
+-        resultMsg:
+-          type: string
+-          description: Result message
+-        transTime:
+-          type: string
+-          description: Transaction time (YYYYMMDDHHMMSS)
+-        transStatus:
+-          type: string
+-          description: Transaction status (1=Sale, 2=Refund) - inquiry only
+-        approvalNo:
+-          type: string
+-          description: Approval code from card company
++        ver: { type: string, example: "100" }
++        merchantId: { type: string }
++        merchantPwd: { type: string }
++        ref: { type: string }
++        tradeGubun: { type: string, example: "1" }
++        cardNo: { type: string, description: "888888888888888X" }
++        expireM: { type: string, example: "00" }
++        expireY: { type: string, example: "00" }
++        currType: { type: string }
++        price: { type: number }
++        payId: { type: string }
++        payEmail: { type: string }
++        payTel: { type: string }
++        productName: { type: string }
+ 
+-    JavascriptRedirectResponse:
++    RefundRequest:
+       type: object
+-      description: JavaScript redirect response for 3DS payments
++      required: [ver, merchantId, merchantPwd, ref, tradeGubun, currType, price, transNo]
+       properties:
+-        responseType:
+-          type: string
+-          description: Response type indicator
+-        ref:
+-          type: string
+-          description: Merchant transaction number
+-        transNo:
+-          type: string
+-          description: Transaction number
+-        resultCode:
+-          type: string
+-          description: Result code
+-        resultMsg:
+-          type: string
+-          description: Result message
+-        transTime:
+-          type: string
+-          description: Transaction time
+-        transState:
+-          type: string
+-          description: Transaction state (A=Approved)
+-        externalUrl:
+-          type: string
+-          description: External payment URL for redirect
+-        refererUrl:
+-          type: string
+-          description: Referer URL for 3DS redirect
+-        checkoutUrl:
+-          type: string
+-          description: Checkout URL for 3DS completion
+-        approvalNo:
+-          type: string
+-          description: Approval number (if completed without 3DS)
+-
+-    Direct3DSResponse:
++        ver: { type: string, example: "100" }
++        merchantId: { type: string }
++        merchantPwd: { type: string }
++        ref: { type: string }
++        tradeGubun: { type: string, example: "2" }
++        currType: { type: string }
++        price: { type: number }
++        transNo: { type: string }
++
++    TransactionInquiryRequest:
+       type: object
++      required: [ver, merchantId, merchantPwd, ref, tradeGubun, currType, price]
+       properties:
+-        responsetype:
+-          type: string
+-          description: Response type
+-        ref:
+-          type: string
+-          description: Merchant transaction number
+-        transno:
+-          type: string
+-          description: Transaction number
+-        transstate:
+-          type: string
+-          description: Transaction state (A=Approved)
+-        resultcode:
+-          type: string
+-          description: Result code
+-        resultmsg:
+-          type: string
+-          description: Result message
+-        transtime:
+-          type: string
+-          description: Transaction time
+-        externalurl:
+-          type: string
+-          description: External payment URL
++        ver: { type: string, example: "100" }
++        merchantId: { type: string }
++        merchantPwd: { type: string }
++        ref: { type: string }
++        tradeGubun: { type: string, example: "9" }
++        currType: { type: string }
++        price: { type: number }
+ 
+-    ErrorResponse:
++    PaymentNotificationRequest:
+       type: object
++      required: [ver, merchantId, merchantPwd, transNo, checkoutId, cardNo, expireM, expireY, csc, payName]
+       properties:
+-        responseType:
+-          type: string
+-          description: Response type (ERROR)
+-        ref:
+-          type: string
+-          description: Merchant transaction number
+-        transNo:
+-          type: string
+-          description: Transaction number
+-        resultCode:
+-          type: string
+-          description: Error code
+-        resultMsg:
+-          type: string
+-          description: Error message
+-        approvalNo:
+-          type: string
+-          description: Approval number (empty for error)
++        ver: { type: string, example: "100" }
++        merchantId: { type: string }
++        merchantPwd: { type: string }
++        transNo: { type: string }
++        checkoutId: { type: string }
++        cardNo: { type: string }
++        expireM: { type: string }
++        expireY: { type: string }
++        csc: { type: string }
++        payName: { type: string }
+ 
+     # ======================
+-    # Callback Response
++    # Response Schemas
+     # ======================
++    TranactionResponse3DS:
++      type: object
++      properties:
++        ref: { type: string }
++        transNo: { type: string }
++        resultCode: { type: string }
++        resultMsg: { type: string }
++        transTime: { type: string }
++        refererUrl: { type: string }
++        checkoutUrl: { type: string }
++        approvalNo: { type: string }
+ 
+-    PaymentCallbackResponse:
++    TransactionResponse:
+       type: object
+-      description: Query parameters sent to callbackURL
+       properties:
+-        merchantId:
+-          type: string
+-          description: Merchant ID
+-        ref:
+-          type: string
+-          description: Merchant transaction number
+-        payId:
+-          type: string
+-          description: Buyer ID
+-        currType:
+-          type: string
+-          description: Currency
+-        price:
+-          type: number
+-          description: Amount
+-        transNo:
+-          type: string
+-          description: Transaction number
+-        transCode:
+-          type: string
+-          description: |
+-            Transaction status code
+-            | Value | Definition |
+-            |-------|------------|
+-            | AS | Authorization Success |
+-            | AF | Authorization Failed |
+-        errCode:
+-          type: string
+-          description: Error code (only on failure)
++        ref: { type: string }
++        transNo: { type: string }
++        resultCode: { type: string }
++        resultMsg: { type: string }
++        transTime: { type: string }
++        transStatus: { type: string, description: "1=Sale, 2=Refund" }
++        approvalNo: { type: string }
++
++    ErrorResponse:
++      type: object
++      properties:
++        responseType: { type: string, example: "ERROR" }
++        ref: { type: string }
++        transNo: { type: string }
++        resultCode: { type: string }
++        resultMsg: { type: string }
++        approvalNo: { type: string }
++
++    Direct3DSNoAuthResponse:
++      type: object
++      properties:
++        responsetype: { type: string, example: "SUCCESS" }
++        ref: { type: string }
++        transno: { type: string }
++        transstate: { type: string, example: "A" }
++        resultcode: { type: string, example: "000" }
++        resultmsg: { type: string }
++        transtime: { type: string }
++        externalurl: { type: string, example: "null" }
++
++    JavascriptRedirectResponse:
++      type: string
++      description: Returns a script tag containing window.location.href
+ 
+ security: []

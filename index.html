@@ -7,12 +7,90 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <!-- Redoc CSS -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-      }
-    </style>
+     <style>
+       body {
+         margin: 0;
+         padding: 0;
+       }
+
+       /* Enhanced readability styles */
+       .redoc-wrap pre {
+         background-color: #f8fafc !important;
+         border: 1px solid #e2e8f0 !important;
+         border-radius: 6px !important;
+         font-size: 14px !important;
+         line-height: 1.5 !important;
+       }
+
+       .redoc-wrap code {
+         background-color: #f1f5f9 !important;
+         color: #1e293b !important;
+         padding: 2px 6px !important;
+         border-radius: 3px !important;
+         font-size: 13px !important;
+       }
+
+       .redoc-wrap table {
+         border-collapse: collapse !important;
+         width: 100% !important;
+         margin: 16px 0 !important;
+       }
+
+       .redoc-wrap table th,
+       .redoc-wrap table td {
+         border: 1px solid #e2e8f0 !important;
+         padding: 12px 16px !important;
+         text-align: left !important;
+       }
+
+       .redoc-wrap table th {
+         background-color: #f8fafc !important;
+         font-weight: 600 !important;
+         color: #1e293b !important;
+       }
+
+       .redoc-wrap table td {
+         background-color: #ffffff !important;
+       }
+
+       .redoc-wrap table tr:nth-child(even) td {
+         background-color: #f8fafc !important;
+       }
+
+       /* Improve mobile responsiveness */
+       @media (max-width: 768px) {
+         .redoc-wrap {
+           font-size: 14px !important;
+         }
+
+         .redoc-wrap pre {
+           font-size: 12px !important;
+           overflow-x: auto !important;
+         }
+
+         .redoc-wrap table {
+           font-size: 13px !important;
+         }
+
+         .redoc-wrap table th,
+         .redoc-wrap table td {
+           padding: 8px 12px !important;
+         }
+       }
+
+       /* Schema section improvements */
+       .redoc-wrap .model-box {
+         background-color: #f8fafc !important;
+         border: 1px solid #e2e8f0 !important;
+         border-radius: 6px !important;
+       }
+
+       .redoc-wrap .model-title {
+         background-color: #f1f5f9 !important;
+         color: #1e293b !important;
+         font-weight: 600 !important;
+       }
+     </style>
   </head>
   <body>
     <redoc spec-url='openapi.yaml'></redoc>
