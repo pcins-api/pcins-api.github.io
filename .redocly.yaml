@@ -1,3 +1,5 @@
+extends:
+  - recommended
 theme:
   # Typography improvements for better readability
   typography:
