@@ -1,99 +1,281 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>PCINS Payment Gateway API</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <!-- Redoc CSS -->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
-     <style>
-       body {
-         margin: 0;
-         padding: 0;
-       }
 
-       /* Enhanced readability styles */
-       .redoc-wrap pre {
-         background-color: #f8fafc !important;
-         border: 1px solid #e2e8f0 !important;
-         border-radius: 6px !important;
-         font-size: 14px !important;
-         line-height: 1.5 !important;
-       }
+<head>
+  <title>PCINS Payment Gateway API</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <!-- Redoc CSS -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
 
-       .redoc-wrap code {
-         background-color: #f1f5f9 !important;
-         color: #1e293b !important;
-         padding: 2px 6px !important;
-         border-radius: 3px !important;
-         font-size: 13px !important;
-       }
+    /* Enhanced readability styles */
+    .redoc-wrap pre {
+      background-color: #1e293b !important;
+      /* 다크 테마 배경 */
+      border: 1px solid #334155 !important;
+      border-radius: 6px !important;
+      font-size: 14px !important;
+      line-height: 1.5 !important;
+      color: #f8fafc !important;
+      /* 텍스트 흰색계열 */
+    }
 
-       .redoc-wrap table {
-         border-collapse: collapse !important;
-         width: 100% !important;
-         margin: 16px 0 !important;
-       }
+    /* 본문 내 인라인 코드 블록만 라이트/회색 테마 적용 (예시 안의 코드는 제외) */
+    .redoc-wrap p>code,
+    .redoc-wrap li>code,
+    .redoc-wrap table code {
+      background-color: #f1f5f9 !important;
+      color: #1e293b !important;
+      padding: 2px 6px !important;
+      border-radius: 3px !important;
+      font-size: 13px !important;
+    }
 
-       .redoc-wrap table th,
-       .redoc-wrap table td {
-         border: 1px solid #e2e8f0 !important;
-         padding: 12px 16px !important;
-         text-align: left !important;
-       }
+    .redoc-wrap table {
+      border-collapse: collapse !important;
+      width: 100% !important;
+      margin: 16px 0 !important;
+    }
 
-       .redoc-wrap table th {
-         background-color: #f8fafc !important;
-         font-weight: 600 !important;
-         color: #1e293b !important;
-       }
+    .redoc-wrap table th,
+    .redoc-wrap table td {
+      border: 1px solid #e2e8f0 !important;
+      padding: 12px 16px !important;
+      text-align: left !important;
+    }
 
-       .redoc-wrap table td {
-         background-color: #ffffff !important;
-       }
+    .redoc-wrap table th {
+      background-color: #f8fafc !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+    }
 
-       .redoc-wrap table tr:nth-child(even) td {
-         background-color: #f8fafc !important;
-       }
+    .redoc-wrap table td {
+      background-color: #ffffff !important;
+    }
 
-       /* Improve mobile responsiveness */
-       @media (max-width: 768px) {
-         .redoc-wrap {
-           font-size: 14px !important;
-         }
+    .redoc-wrap table tr:nth-child(even) td {
+      background-color: #f8fafc !important;
+    }
 
-         .redoc-wrap pre {
-           font-size: 12px !important;
-           overflow-x: auto !important;
-         }
+    /* Improve mobile responsiveness */
+    @media (max-width: 768px) {
+      .redoc-wrap {
+        font-size: 14px !important;
+      }
 
-         .redoc-wrap table {
-           font-size: 13px !important;
-         }
+      .redoc-wrap pre {
+        font-size: 12px !important;
+        overflow-x: auto !important;
+      }
 
-         .redoc-wrap table th,
-         .redoc-wrap table td {
-           padding: 8px 12px !important;
-         }
-       }
+      .redoc-wrap table {
+        font-size: 13px !important;
+      }
 
-       /* Schema section improvements */
-       .redoc-wrap .model-box {
-         background-color: #f8fafc !important;
-         border: 1px solid #e2e8f0 !important;
-         border-radius: 6px !important;
-       }
+      .redoc-wrap table th,
+      .redoc-wrap table td {
+        padding: 8px 12px !important;
+      }
+    }
 
-       .redoc-wrap .model-title {
-         background-color: #f1f5f9 !important;
-         color: #1e293b !important;
-         font-weight: 600 !important;
-       }
-     </style>
-  </head>
-  <body>
-    <redoc spec-url='openapi.yaml'></redoc>
-    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
-  </body>
+    /* Schema section improvements */
+    .redoc-wrap .model-box {
+      background-color: #f8fafc !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 6px !important;
+    }
+
+    .redoc-wrap .model-title {
+      background-color: #f1f5f9 !important;
+      color: #1e293b !important;
+      font-weight: 600 !important;
+    }
+
+    /* Copy button styles */
+    .copy-btn-custom {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      margin-left: 14px;
+    }
+
+    .copy-btn-custom:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .copy-btn-custom:active {
+      transform: translateY(0);
+    }
+
+    .copy-btn-custom svg {
+      stroke: currentColor;
+      stroke-width: 2.5;
+      margin-right: 6px;
+    }
+
+    .copy-tooltip {
+      position: absolute;
+      top: -34px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 5px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .copy-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #1e293b transparent transparent transparent;
+    }
+
+    .copy-tooltip.show {
+      opacity: 1;
+      visibility: visible;
+    }
+  </style>
+</head>
+
+<body>
+  <redoc spec-url='openapi.yaml'></redoc>
+  <script src="https://cdn.jsdelivr.net/npm/redoc/bundles/redoc.standalone.js"></script>
+  <script>
+    function injectCopyButtons() {
+      const endpoints = [
+        '/pay_link.jsp',
+        '/qr_link.jsp',
+        '/pay_request.jsp',
+        '/pay_external.jsp',
+        '/pay_direct3ds.jsp',
+        '/pay_3ds_status_check.jsp'
+      ];
+
+      const elements = document.querySelectorAll('*');
+      const targetContainers = new Map();
+
+      elements.forEach(el => {
+        const text = el.textContent.trim();
+        // 자식 요소가 없고 딱 텍스트만 있으면서 값이 엔드포인트 URL과 일치할 때
+        if (endpoints.includes(text) && el.children.length === 0) {
+
+          // 응답/요청 본문, 예제 테이블, 마크다운 본문 내부에서는 버튼 렌더링을 차단합니다.
+          if (el.closest('pre') || el.closest('code') || el.closest('table') || el.closest('p')) return;
+
+          // 진정한 API 엔드포인트 제목줄인지 확인하기 위해 부모 컨테이너에 POST 문자열이 있는지 검증합니다 (대소문자 무시).
+          const wrapper = el.closest('div') || el.parentElement;
+          if (wrapper && wrapper.textContent.toUpperCase().includes('POST') && !targetContainers.has(wrapper)) {
+            targetContainers.set(wrapper, 'https://pay.pcins.co.kr/gw' + text);
+          }
+        }
+      });
+
+      // HTML Form 예시에 불필요하게 렌더링되는 Redoc 기본 UI 'Copy' 버튼 숨김 처리
+      document.querySelectorAll('button').forEach(btn => {
+        const btnText = btn.textContent.trim().toUpperCase();
+        if (btnText === 'COPY' || btnText === '복사') {
+          let p = btn.parentElement;
+          let checkCount = 0;
+          while (p && checkCount < 4) {
+            // UI 폼 렌더러 특성상 'form'이나 'type="hidden"' 문자열이 존재함 (HTML Entities 고려)
+            let htmlContent = p.innerHTML.toLowerCase();
+            let textContent = p.textContent.toLowerCase().replace(/\s+/g, '');
+
+            if (textContent.includes('formaction=') || htmlContent.includes('&lt;form') || textContent.includes('type="hidden"')) {
+              btn.style.cssText = 'display: none !important; visibility: hidden;';
+              break;
+            }
+            p = p.parentElement;
+            checkCount++;
+          }
+        }
+      });
+
+      targetContainers.forEach((urlText, container) => {
+        if (container.querySelector('.copy-btn-wrapper')) return;
+
+        // Redoc 컴포넌트 내부 DOM구조를 깨지 않도록 absolute positioning을 사용합니다.
+        container.style.position = 'relative';
+
+        const btnWrapper = document.createElement('div');
+        btnWrapper.className = 'copy-btn-wrapper';
+        btnWrapper.style.position = 'absolute';
+        btnWrapper.style.right = '10px'; // 우측에 고정
+        btnWrapper.style.top = '50%';
+        btnWrapper.style.transform = 'translateY(-50%)';
+        btnWrapper.style.zIndex = '10';
+
+        // 바탕 클릭 이벤트가 Parent(Dropdown 등)로 전파되는 걸 방지합니다.
+        btnWrapper.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn-custom';
+        copyBtn.title = 'Copy API URL';
+        copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="feather feather-copy"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy URL';
+
+        const tooltip = document.createElement('span');
+        tooltip.className = 'copy-tooltip';
+        tooltip.textContent = 'Copied!';
+
+        btnWrapper.appendChild(copyBtn);
+        btnWrapper.appendChild(tooltip);
+        container.appendChild(btnWrapper);
+
+        copyBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation(); // 버튼 상위의 아코디언 패널 토글 차단
+          navigator.clipboard.writeText(urlText).then(() => {
+            tooltip.classList.add('show');
+            setTimeout(() => tooltip.classList.remove('show'), 2000); // 2초 뒤 툴팁 해제
+          });
+        });
+      });
+    }
+
+    const observer = new MutationObserver(() => injectCopyButtons());
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        injectCopyButtons(); // Redoc 렌더링 이후 1차 주입
+        observer.observe(document.body, { childList: true, subtree: true }); // 이후 동적 DOM 변화 관찰
+      }, 1500);
+    });
+  </script>
+</body>
+
 </html>

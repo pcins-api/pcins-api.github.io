@@ -1,0 +1,44 @@
+theme:
+  # Typography improvements for better readability
+  typography:
+    fontSize: '16px'
+    lineHeight: 1.6
+    fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+    headings:
+      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+      fontWeight: '600'
+      lineHeight: 1.4
+    code:
+      fontSize: '14px'
+      fontFamily: '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace'
+      lineHeight: 1.5
+
+  # Color scheme for better contrast
+  colors:
+    primary:
+      main: '#2563eb'
+    text:
+      primary: '#1f2937'
+      secondary: '#4b5563'
+    responses:
+      success: '#059669'
+      error: '#dc2626'
+      redirect: '#d97706'
+      info: '#2563eb'
+    http:
+      get: '#059669'
+      post: '#d97706'
+      put: '#2563eb'
+      delete: '#dc2626'
+
+  # Spacing for better layout
+  spacing:
+    sectionHorizontal: 40
+    sectionVertical: 32
+
+  # Schema styling
+  schema:
+    linesColor: '#e5e7eb'
+    defaultDetailsWidth: '75%'
+    typeNameColor: '#2563eb'
+    typeTitleColor: '#1f2937'

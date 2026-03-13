@@ -83,8 +83,12 @@ info:
     - **Production**: `https://pay.pcins.co.kr/gw`
 
     ## Authentication (Test Account Environment)
-    All API requests require:
+    NON-3DS:
     - `merchantId`: M000000187
+    - `merchantPwd`: 1234
+      
+    3DS:
+    - `merchantId`: M000000413
     - `merchantPwd`: 1234
 
     ## Data Format Principles
@@ -343,31 +347,29 @@ paths:
                 $ref: "#/components/schemas/TranactionResponse3DS"
               examples:
                 credit_card_success:
-                  summary: "[Credit Card Payment] 3D Secure Response"
+                  summary: "[Credit Card Payment] Success"
                   value: |
                     <?xml version="1.0" encoding="UTF-8" ?>
                     <TranactionResponse>
-                        <ref>ORD20240122001</ref>
-                        <transNo>20241129114040</transNo>
+                        <ref>ref</ref>
+                        <transNo>transaction Number</transNo>
                         <resultCode>000</resultCode>
                         <resultMsg>Success</resultMsg>
                         <transTime>20241129114040</transTime>
-                        <refererUrl>https://pay.pcins.co.kr/referer...</refererUrl>
-                        <checkoutUrl>https://pay.pcins.co.kr/checkout...</checkoutUrl>
+                        <checkoutUrl>Checkout URL</checkoutUrl>
                         <approvalNo></approvalNo>
                     </TranactionResponse>
                 credit_certification_success:
-                  summary: "[Credit Certification] 3D Secure Response"
+                  summary: "[Credit Certification] Success"
                   value: |
                     <?xml version="1.0" encoding="UTF-8" ?>
                     <TranactionResponse>
-                        <ref>CERT20240122001</ref>
-                        <transNo>20241129114055</transNo>
+                        <ref>ref</ref>
+                        <transNo>transaction Number</transNo>
                         <resultCode>000</resultCode>
                         <resultMsg>Success</resultMsg>
-                        <transTime>20241129114055</transTime>
-                        <refererUrl>https://pay.pcins.co.kr/referer...</refererUrl>
-                        <checkoutUrl>https://pay.pcins.co.kr/checkout...</checkoutUrl>
+                        <transTime>20241129114040</transTime>
+                        <checkoutUrl>Checkout URL</checkoutUrl>
                         <approvalNo></approvalNo>
                     </TranactionResponse>
 
@@ -447,7 +449,7 @@ paths:
     post:
       tags:
         - API Endpoints
-      summary: Direct 3DS Payment (UI)
+      summary: Direct 3DS Payment (3DS)
       description: |
         Direct 3D Secure payment with card info submitted directly.
         This endpoint is required for **VAN22(PCINS HR)**.
@@ -459,7 +461,33 @@ paths:
 
         ## City Code Reference (3166-2:JP)
         Use the numeric code for the `cityCode` parameter:
-        `1: HOKKAIDO`, `2: AOMORI`, `3: IWATE`, `4: MIYAGI`, `5: AKITA`, `6: YAMAGATA`, `7: FUKUSHIMA`, `8: IBARAKI`, `9: TOCHIGI`, `10: GUNMA`, `11: SAITAMA`, `12: CHIBA`, `13: TOKYO`, `14: KANAGAWA`, `15: NIIGATA`, `16: TOYAMA`, `17: ISHIKAWA`, `18: FUKUI`, `19: YAMANASHI`, `20: NAGANO`, `21: GIFU`, `22: SHIZUOKA`, `23: AICHI`, `24: MIE`, `25: SHIGA`, `26: KYOTO`, `27: OSAKA`, `28: HYOGO`, `29: NARA`, `30: WAKAYAMA`, `31: TOTTORI`, `32: SHIMANE`, `33: OKAYAMA`, `34: HIROSHIMA`, `35: YAMAGUCHI`, `36: TOKUSHIMA`, `37: KAGAWA`, `38: EHIME`, `39: KOCHI`, `40: FUKUOKA`, `41: SAGA`, `42: NAGASAKI`, `43: KUMAMOTO`, `44: OITA`, `45: MIYAZAKI`, `46: KAGOSHIMA`, `47: OKINAWA`
+
+        | Code | Prefecture | Code | Prefecture |
+        |---|---|---|---|
+        | 1 | HOKKAIDO | 25 | SHIGA |
+        | 2 | AOMORI | 26 | KYOTO |
+        | 3 | IWATE | 27 | OSAKA |
+        | 4 | MIYAGI | 28 | HYOGO |
+        | 5 | AKITA | 29 | NARA |
+        | 6 | YAMAGATA | 30 | WAKAYAMA |
+        | 7 | FUKUSHIMA | 31 | TOTTORI |
+        | 8 | IBARAKI | 32 | SHIMANE |
+        | 9 | TOCHIGI | 33 | OKAYAMA |
+        | 10 | GUNMA | 34 | HIROSHIMA |
+        | 11 | SAITAMA | 35 | YAMAGUCHI |
+        | 12 | CHIBA | 36 | TOKUSHIMA |
+        | 13 | TOKYO | 37 | KAGAWA |
+        | 14 | KANAGAWA | 38 | EHIME |
+        | 15 | NIIGATA | 39 | KOCHI |
+        | 16 | TOYAMA | 40 | FUKUOKA |
+        | 17 | ISHIKAWA | 41 | SAGA |
+        | 18 | FUKUI | 42 | NAGASAKI |
+        | 19 | YAMANASHI | 43 | KUMAMOTO |
+        | 20 | NAGANO | 44 | OITA |
+        | 21 | GIFU | 45 | MIYAZAKI |
+        | 22 | SHIZUOKA | 46 | KAGOSHIMA |
+        | 23 | AICHI | 47 | OKINAWA |
+        | 24 | MIE | | |
       operationId: direct3DSPayment
       x-codeSamples:
         - lang: HTML
