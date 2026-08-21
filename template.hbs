@@ -13,6 +13,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Redoc Standalone Bundle for Hydration -->
+  <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+
   <style>
     /* ==========================================================================
        1. Design System Tokens (Eye-Care & Soft Contrast Palette)
@@ -766,8 +769,8 @@
     </div>
   </header>
 
-  <!-- Redoc Application Container -->
-  <div id="redoc-container"></div>
+  <!-- Redoc Static Injected Content -->
+  {{{redocHTML}}}
 
   <!-- Result Code Quick Finder Modal -->
   <div class="pcins-modal-backdrop" id="result-code-modal" onclick="closeResultCodeModal(event)">
@@ -804,9 +807,6 @@
     <span id="toast-icon">✅</span>
     <span id="toast-message">복사되었습니다!</span>
   </div>
-
-  <!-- Redocly Standalone Script -->
-  <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
 
   <script>
     // Result Code Master Dataset (100% 1:1 with Apidog)
@@ -1006,45 +1006,8 @@
       }
     });
 
-    // Initialize Redoc
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
-
-      if (typeof Redoc !== 'undefined') {
-        Redoc.init(
-          'openapi.yaml',
-          {
-            scrollYOffset: 64,
-            hideDownloadButton: false,
-            disableSearch: false,
-            expandResponses: "all",
-            showExtensions: true,
-            theme: {
-              colors: {
-                primary: { main: '#3b82f6' },
-                text: {
-                  primary: '#1e293b',
-                  secondary: '#64748b'
-                }
-              },
-              typography: {
-                fontSize: '14.5px',
-                lineHeight: '1.6',
-                fontFamily: '"Inter", sans-serif',
-                headings: {
-                  fontFamily: '"Inter", sans-serif',
-                  fontWeight: '700'
-                },
-                code: {
-                  fontFamily: '"JetBrains Mono', monospace',
-                  fontSize: '13px'
-                }
-              }
-            }
-          },
-          document.getElementById('redoc-container')
-        );
-      }
     });
   </script>
 </body>

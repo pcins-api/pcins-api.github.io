@@ -7,6 +7,10 @@ on:
     paths:
       - 'openapi.yaml'
       - 'index.html'
+      - 'template.hbs'
+      - '.redocly.yaml'
+      - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
 
 permissions:
