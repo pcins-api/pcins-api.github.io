@@ -19,45 +19,45 @@ theme:
         - lang: PHP
 
   typography:
-    fontSize: '14.5px'
+    fontSize: '14px'
     lineHeight: 1.6
-    fontFamily: '"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     headings:
-      fontFamily: '"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-      fontWeight: '700'
+      fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+      fontWeight: '600'
       lineHeight: 1.3
     code:
-      fontSize: '13px'
-      fontFamily: '"JetBrains Mono", "SFMono-Regular", Consolas, Menlo, monospace'
+      fontSize: '12.5px'
+      fontFamily: '"JetBrains Mono", "SFMono-Regular", Consolas, monospace'
       lineHeight: 1.5
 
   colors:
     primary:
-      main: '#3b82f6'
+      main: '#0969da'
     text:
-      primary: '#1e293b'
-      secondary: '#64748b'
+      primary: '#1f2328'
+      secondary: '#656d76'
     responses:
       success:
-        color: '#10b981'
+        color: '#1a7f37'
       error:
-        color: '#ef4444'
+        color: '#cf222e'
       redirect:
-        color: '#f59e0b'
+        color: '#9a6700'
       info:
-        color: '#3b82f6'
+        color: '#0969da'
     http:
-      get: '#10b981'
-      post: '#3b82f6'
-      put: '#f59e0b'
-      delete: '#ef4444'
+      get: '#1a7f37'
+      post: '#0969da'
+      put: '#9a6700'
+      delete: '#cf222e'
 
   spacing:
     sectionHorizontal: 28
     sectionVertical: 24
 
   schema:
-    linesColor: '#e2e8f0'
+    linesColor: '#d0d7de'
     defaultDetailsWidth: '65%'
-    typeNameColor: '#3b82f6'
-    typeTitleColor: '#1e293b'
+    typeNameColor: '#0969da'
+    typeTitleColor: '#1f2328'

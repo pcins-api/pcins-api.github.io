@@ -1,102 +1,118 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="light">
+<html lang="en" data-theme="light">
 
 <head>
   <title>PCINS Payment Gateway API Documentation</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="PCINS Payment Gateway API Documentation - Hosted UI and Server-to-Server API Integration Guide." />
+  <meta name="description" content="PCINS Payment Gateway API Documentation - Developer Integration Guide." />
   <link rel="icon" href="pcins_logo.png" type="image/png" />
 
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Redoc Standalone Bundle for Hydration -->
   <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
 
   <style>
     /* ==========================================================================
-       1. Design System Tokens (Eye-Care & Soft Contrast Palette)
+       1. Developer-Friendly Engineering Design System (GitHub Docs & Stripe Style)
        ========================================================================== */
     :root {
       /* Primary Brand & Accents */
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --primary-light: #eff6ff;
-      --primary-border: #bfdbfe;
-      --accent: #38bdf8;
+      --primary: #0969da;
+      --primary-hover: #0854b0;
+      --primary-light: #ddf4ff;
+      --primary-border: #54aeff;
       
-      /* Surface & Backgrounds (Soft Slate Tone - Non-glare) */
-      --bg-body: #f8fafc;
-      --bg-header: rgba(248, 250, 252, 0.94);
+      /* Status Colors */
+      --success: #1a7f37;
+      --success-bg: #dafbe1;
+      --success-border: #8de49e;
+      --error: #cf222e;
+      --error-bg: #ffebe9;
+      --error-border: #ff8182;
+      
+      /* Surfaces & Layout (Clean Technical White & Neutral Grey) */
+      --bg-body: #ffffff;
+      --bg-sidebar: #f6f8fa;
+      --bg-header: rgba(255, 255, 255, 0.9);
       --bg-card: #ffffff;
-      --bg-card-hover: #f1f5f9;
+      --bg-card-hover: #f3f4f6;
       --bg-modal: #ffffff;
-      --bg-code: #0f172a;
+      --bg-code: #0d1117;
       
-      /* Typography (Soft Charcoal - Reduced Eye Strain) */
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --text-dim: #94a3b8;
+      /* Typography (Precise Technical Neutral) */
+      --text-main: #1f2328;
+      --text-muted: #656d76;
+      --text-dim: #8c959f;
       
-      /* Borders & Dividers */
-      --border-color: #e2e8f0;
-      --border-strong: #cbd5e1;
+      /* Borders & Dividers (Subtle 1px Lines) */
+      --border-color: #d0d7de;
+      --border-subtle: #eaeef2;
+      --border-strong: #afb8c1;
       
       /* Shadows */
-      --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
-      --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.06);
-      --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
-      --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+      --shadow-sm: 0 1px 2px rgba(31, 35, 40, 0.04);
+      --shadow-md: 0 3px 6px rgba(140, 149, 159, 0.15);
+      --shadow-modal: 0 8px 24px rgba(140, 149, 159, 0.2);
     }
 
     [data-theme="dark"] {
-      /* Primary Brand & Accents (Pastel Soft Blue) */
-      --primary: #60a5fa;
-      --primary-hover: #93c5fd;
-      --primary-light: rgba(96, 165, 250, 0.14);
-      --primary-border: rgba(96, 165, 250, 0.28);
-      --accent: #38bdf8;
+      /* Primary Brand & Accents */
+      --primary: #2f81f7;
+      --primary-hover: #58a6ff;
+      --primary-light: rgba(56, 139, 253, 0.15);
+      --primary-border: rgba(56, 139, 253, 0.4);
       
-      /* Surface & Backgrounds (Deep Slate Charcoal - Non-harsh) */
-      --bg-body: #0f172a;
-      --bg-header: rgba(15, 23, 42, 0.92);
-      --bg-card: #1e293b;
-      --bg-card-hover: #273549;
-      --bg-modal: #1e293b;
-      --bg-code: #0b1120;
+      /* Status Colors */
+      --success: #3fb950;
+      --success-bg: rgba(46, 160, 67, 0.15);
+      --success-border: rgba(63, 185, 80, 0.4);
+      --error: #f85149;
+      --error-bg: rgba(248, 81, 73, 0.15);
+      --error-border: rgba(248, 81, 73, 0.4);
       
-      /* Typography (Soft Silver Off-White - Reduced Glare) */
-      --text-main: #e2e8f0;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
+      /* Surfaces & Layout (True Developer Dark - GitHub & Vercel) */
+      --bg-body: #0d1117;
+      --bg-sidebar: #010409;
+      --bg-header: rgba(13, 17, 23, 0.9);
+      --bg-card: #161b22;
+      --bg-card-hover: #21262d;
+      --bg-modal: #161b22;
+      --bg-code: #010409;
+      
+      /* Typography */
+      --text-main: #e6edf3;
+      --text-muted: #8b949e;
+      --text-dim: #6e7681;
       
       /* Borders & Dividers */
-      --border-color: #334155;
-      --border-strong: #475569;
+      --border-color: #30363d;
+      --border-subtle: #21262d;
+      --border-strong: #484f58;
       
       /* Shadows */
-      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-      --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(1, 4, 9, 0.5);
+      --shadow-modal: 0 12px 32px rgba(1, 4, 9, 0.8);
     }
 
     /* ==========================================================================
-       2. Global Reset & Base Typography
+       2. Global Reset & Engineering Typography
        ========================================================================== */
     * {
       box-sizing: border-box;
-      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.1s ease;
     }
 
     body {
       margin: 0;
       padding: 0;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-size: 14.5px;
+      font-size: 14px;
       line-height: 1.6;
       color: var(--text-main);
       background-color: var(--bg-body);
@@ -106,70 +122,68 @@
 
     /* Custom Scrollbar */
     ::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
     }
     ::-webkit-scrollbar-track {
       background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: var(--border-strong);
-      border-radius: 4px;
+      background: var(--border-color);
+      border-radius: 3px;
     }
     ::-webkit-scrollbar-thumb:hover {
       background: var(--text-dim);
     }
 
-    /* Top Scroll Progress Indicator */
+    /* Top Progress Bar (Subtle Monochromatic Blue) */
     #scroll-progress {
       position: fixed;
       top: 0;
       left: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #3b82f6, #38bdf8, #10b981);
+      height: 2px;
+      background: var(--primary);
       width: 0%;
       z-index: 10000;
-      transition: width 0.1s ease;
+      transition: width 0.08s ease;
     }
 
     /* ==========================================================================
-       3. Header & Brand Navigation
+       3. Header & Navigation (Clean Precision Engineering)
        ========================================================================== */
     .pcins-top-bar {
       position: sticky;
       top: 0;
       z-index: 1000;
-      height: 64px;
+      height: 56px;
       background: var(--bg-header);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
-      box-shadow: var(--shadow-sm);
+      padding: 0 20px;
     }
 
     .pcins-brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
       color: var(--text-main);
       white-space: nowrap;
     }
 
     .pcins-logo-icon {
-      width: 30px;
-      height: 30px;
+      width: 26px;
+      height: 26px;
       object-fit: contain;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
       border-radius: 4px;
     }
 
     .pcins-brand-title {
-      font-size: 16px;
+      font-size: 14.5px;
       font-weight: 700;
       color: var(--text-main);
       letter-spacing: -0.2px;
@@ -177,169 +191,160 @@
     }
 
     .pcins-version-tag {
-      background: var(--primary-light);
-      color: var(--primary);
+      background: var(--bg-card-hover);
+      color: var(--text-muted);
       font-size: 11px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 9999px;
-      border: 1px solid var(--primary-border);
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      font-family: 'JetBrains Mono', monospace;
       white-space: nowrap;
     }
 
     .pcins-spec-tag {
-      background: #ecfdf5;
-      color: #059669;
+      background: var(--success-bg);
+      color: var(--success);
       font-size: 11px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 9999px;
-      border: 1px solid #a7f3d0;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--success-border);
+      font-family: 'JetBrains Mono', monospace;
       white-space: nowrap;
-    }
-    [data-theme="dark"] .pcins-spec-tag {
-      background: rgba(16, 185, 129, 0.12);
-      color: #34d399;
-      border-color: rgba(16, 185, 129, 0.25);
     }
 
     .pcins-nav-links {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       white-space: nowrap;
     }
 
-    /* Test Account Copy Badges */
+    /* Test Account Copy Badges (IDE Tag Style) */
     .pcins-account-badge {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
       background: var(--bg-card);
-      padding: 6px 12px;
-      border-radius: 8px;
+      padding: 4px 10px;
+      border-radius: 6px;
       border: 1px solid var(--border-color);
       cursor: pointer;
       user-select: none;
-      transition: all 0.2s ease;
       font-family: 'JetBrains Mono', monospace;
-      box-shadow: var(--shadow-sm);
       white-space: nowrap;
+      transition: all 0.15s ease;
     }
 
     .pcins-account-badge:hover {
       border-color: var(--primary);
       color: var(--primary);
       background: var(--primary-light);
-      transform: translateY(-1px);
     }
 
     .pcins-account-badge .badge-label {
-      font-weight: 700;
+      font-weight: 600;
       color: var(--text-main);
       white-space: nowrap;
     }
 
     .pcins-account-badge .copy-icon {
-      opacity: 0.6;
-      font-size: 11px;
+      opacity: 0.5;
+      display: inline-flex;
+      align-items: center;
+    }
+    .pcins-account-badge:hover .copy-icon {
+      opacity: 1;
     }
 
-    /* Action Buttons */
+    /* Action Buttons (Compact Tooling) */
     .pcins-action-btn {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 12.5px;
+      font-weight: 500;
       color: var(--text-main);
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      padding: 6px 14px;
-      border-radius: 8px;
+      padding: 4px 10px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-sm);
       white-space: nowrap;
+      transition: all 0.15s ease;
     }
 
     .pcins-action-btn:hover {
       border-color: var(--primary);
-      background: var(--primary-light);
       color: var(--primary);
-      transform: translateY(-1px);
+      background: var(--primary-light);
     }
 
     .pcins-action-btn kbd {
-      background: var(--border-color);
+      background: var(--bg-card-hover);
       color: var(--text-muted);
-      font-size: 11px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: inherit;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 5px;
+      border-radius: 3px;
+      border: 1px solid var(--border-color);
+      box-shadow: inset 0 -1px 0 var(--border-color);
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .pcins-theme-toggle {
-      width: 38px;
-      height: 38px;
+      width: 32px;
+      height: 32px;
       padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 8px;
+      border-radius: 6px;
       border: 1px solid var(--border-color);
       background: var(--bg-card);
-      color: var(--text-main);
+      color: var(--text-muted);
       cursor: pointer;
-      font-size: 16px;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-sm);
+      transition: all 0.15s ease;
     }
 
     .pcins-theme-toggle:hover {
       border-color: var(--primary);
-      background: var(--primary-light);
       color: var(--primary);
-      transform: translateY(-1px);
+      background: var(--primary-light);
     }
 
     /* ==========================================================================
-       4. Redoc UI Overrides & Readability Enhancements (No More 2-Line Wrapping)
+       4. Redoc UI Overrides (Clean Engineering 3-Column Layout)
        ========================================================================== */
     .redoc-wrap {
       font-family: 'Inter', sans-serif !important;
       background-color: var(--bg-body) !important;
     }
 
-    /* Banner Image Styling in Top Section */
-    .api-content img[src*="pcins_image.png"] {
-      max-width: 280px !important;
-      height: auto !important;
-      margin-bottom: 20px !important;
-      display: block !important;
-      border-radius: 6px !important;
-    }
-
-    [data-theme="dark"] .api-content img[src*="pcins_image.png"] {
-      background: rgba(255, 255, 255, 0.92);
-      padding: 6px 12px;
-      border-radius: 8px;
-    }
-
-    /* Left Sidebar Menu Width & Text Wrapping Prevention */
+    /* Column 1: Left Navigation Sidebar */
     [role="navigation"] {
-      width: 285px !important;
-      min-width: 285px !important;
-      background-color: var(--bg-body) !important;
+      width: 280px !important;
+      min-width: 280px !important;
+      background-color: var(--bg-sidebar) !important;
       border-right: 1px solid var(--border-color) !important;
+    }
+
+    [role="navigation"] input.search-input {
+      background-color: var(--bg-card) !important;
+      color: var(--text-main) !important;
+      border: 1px solid var(--border-color) !important;
+      border-radius: 6px !important;
+      font-size: 13px !important;
+      padding: 7px 12px 7px 32px !important;
     }
 
     [role="navigation"] label {
       color: var(--text-muted) !important;
-      font-weight: 600 !important;
-      font-size: 13.5px !important;
+      font-weight: 500 !important;
+      font-size: 13px !important;
       word-break: keep-all !important;
       line-height: 1.35 !important;
     }
@@ -348,12 +353,28 @@
     [role="navigation"] li.active > a {
       color: var(--primary) !important;
       background-color: var(--primary-light) !important;
+      font-weight: 600 !important;
     }
 
-    /* Main Content Area */
+    /* Column 2: Main Documentation Content Area */
     .api-content {
       background-color: var(--bg-body) !important;
       max-width: none !important;
+    }
+
+    /* Banner Image Styling in Top Section */
+    .api-content img[src*="pcins_image.png"] {
+      max-width: 240px !important;
+      height: auto !important;
+      margin-bottom: 20px !important;
+      display: block !important;
+      border-radius: 4px !important;
+    }
+
+    [data-theme="dark"] .api-content img[src*="pcins_image.png"] {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 6px 12px;
+      border-radius: 6px;
     }
 
     .api-content h1, 
@@ -361,66 +382,71 @@
     .api-content h3, 
     .api-content h4 {
       color: var(--text-main) !important;
-      font-weight: 700 !important;
-      letter-spacing: -0.02em !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.015em !important;
       word-break: keep-all !important;
     }
 
     .api-content p,
     .api-content li {
       color: var(--text-main) !important;
-      line-height: 1.65 !important;
+      line-height: 1.6 !important;
       word-break: keep-all !important;
     }
 
-    /* --- [KEY FIX 1] Table Readability & 1-Line Clean Alignment --- */
+    /* Column 3: Right Side Code Block Panel */
+    .redoc-wrap [role="region"],
+    div[class*="sc-iqzjCY"],
+    div[class*="sc-kUNMIZ"] {
+      background-color: var(--bg-code) !important;
+    }
+
+    /* --- Clean Table Readability --- */
     table {
       width: 100% !important;
       border-collapse: collapse !important;
       border: 1px solid var(--border-color) !important;
-      border-radius: 8px !important;
+      border-radius: 6px !important;
       overflow: hidden !important;
       background-color: var(--bg-card) !important;
       margin: 16px 0 !important;
     }
 
     th {
-      background-color: var(--bg-card-hover) !important;
+      background-color: var(--bg-sidebar) !important;
       color: var(--text-main) !important;
       border-bottom: 1px solid var(--border-color) !important;
-      font-weight: 700 !important;
-      font-size: 13.5px !important;
-      padding: 10px 14px !important;
+      font-weight: 600 !important;
+      font-size: 13px !important;
+      padding: 8px 12px !important;
       white-space: nowrap !important;
       word-break: keep-all !important;
     }
 
     td {
       border-bottom: 1px solid var(--border-color) !important;
-      padding: 9px 14px !important;
-      font-size: 13.5px !important;
+      padding: 8px 12px !important;
+      font-size: 13px !important;
       line-height: 1.5 !important;
       vertical-align: middle !important;
     }
 
-    /* Prevent breaking key table columns into 2 lines */
     td:first-child,
     td:nth-child(2) {
       word-break: keep-all !important;
     }
 
-    /* Code, Symbols, and Conditions inside tables should NEVER wrap */
     table code {
       white-space: nowrap !important;
       font-family: 'JetBrains Mono', monospace !important;
-      font-size: 12.5px !important;
-      padding: 2px 6px !important;
+      font-size: 12px !important;
+      padding: 2px 5px !important;
       border-radius: 4px !important;
       background-color: var(--bg-card-hover) !important;
       border: 1px solid var(--border-color) !important;
     }
 
-    /* --- [KEY FIX 2] Schema Parameter Table: Property Name + Required Badge 1-Line Flex --- */
+    /* Schema Parameter Table: 1-Line Clean Alignment */
     td[kind="field"] {
       white-space: nowrap !important;
       min-width: 160px !important;
@@ -432,56 +458,45 @@
       align-items: center !important;
       gap: 6px !important;
       font-family: 'JetBrains Mono', monospace !important;
-      font-size: 13.5px !important;
+      font-size: 13px !important;
       font-weight: 600 !important;
       white-space: nowrap !important;
     }
 
-    /* Required Badge inside schema tables: side-by-side on 1 line */
+    /* Required Badge inside schema tables */
     td[kind="field"] div[class*="required"],
     td[kind="field"] span[class*="required"] {
       display: inline-block !important;
-      font-size: 11px !important;
-      font-weight: 700 !important;
-      padding: 1px 6px !important;
-      border-radius: 4px !important;
+      font-size: 10px !important;
+      font-weight: 600 !important;
+      padding: 1px 5px !important;
+      border-radius: 3px !important;
       margin-left: 6px !important;
       margin-top: 0 !important;
       vertical-align: middle !important;
       white-space: nowrap !important;
+      background-color: var(--error-bg) !important;
+      color: var(--error) !important;
+      border: 1px solid var(--error-border) !important;
     }
 
-    /* Schema Type & Format Labels (e.g. string <email>, number) */
+    /* Schema Type & Format Labels */
     td span[class*="hhCpbw"],
     td span[class*="fIGxvH"],
     td div > span {
       white-space: nowrap !important;
     }
 
-    /* Enum Badges in Schema */
-    span[class*="cNHQfj"],
-    span[class*="enum"] {
-      white-space: nowrap !important;
-      display: inline-block !important;
-      margin-right: 4px !important;
-      margin-bottom: 2px !important;
-    }
-
-    /* Right Side Code Block Panel */
-    [data-theme="dark"] .redoc-wrap [role="region"] {
-      background-color: #0b1120 !important;
-    }
-
-    /* Style Redoc copy button cleanly */
+    /* Copy Button in Code Blocks */
     div[class*="sc-gjLKRm"] button {
-      border-radius: 6px !important;
-      font-size: 12px !important;
-      font-weight: 600 !important;
-      transition: all 0.2s ease !important;
+      border-radius: 4px !important;
+      font-size: 11.5px !important;
+      font-weight: 500 !important;
+      font-family: 'JetBrains Mono', monospace !important;
     }
 
     /* ==========================================================================
-       5. Result Code Finder Modal (Clean & Polished)
+       5. Result Code Finder Modal (Raycast / Command Palette Style)
        ========================================================================== */
     .pcins-modal-backdrop {
       position: fixed;
@@ -489,14 +504,14 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(8px);
+      background: rgba(1, 4, 9, 0.6);
+      backdrop-filter: blur(6px);
       z-index: 100000;
       display: none;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      animation: fadeIn 0.2s ease;
+      animation: fadeIn 0.15s ease;
     }
 
     .pcins-modal-backdrop.active {
@@ -506,19 +521,19 @@
     .pcins-modal {
       background: var(--bg-modal);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
+      border-radius: 10px;
       width: 100%;
-      max-width: 680px;
-      max-height: 82vh;
+      max-width: 640px;
+      max-height: 80vh;
       display: flex;
       flex-direction: column;
       box-shadow: var(--shadow-modal);
       overflow: hidden;
-      animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: slideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .pcins-modal-header {
-      padding: 18px 24px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
@@ -527,8 +542,8 @@
     }
 
     .pcins-modal-title {
-      font-size: 16.5px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 600;
       color: var(--text-main);
       display: flex;
       align-items: center;
@@ -539,11 +554,11 @@
     .pcins-modal-close {
       background: none;
       border: none;
-      font-size: 20px;
+      font-size: 18px;
       color: var(--text-muted);
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 2px 6px;
+      border-radius: 4px;
     }
 
     .pcins-modal-close:hover {
@@ -552,57 +567,53 @@
     }
 
     .pcins-search-bar {
-      padding: 16px 24px;
+      padding: 12px 18px;
       border-bottom: 1px solid var(--border-color);
-      background: var(--bg-body);
+      background: var(--bg-sidebar);
     }
 
     .pcins-search-input {
       width: 100%;
-      padding: 12px 16px;
-      border-radius: 10px;
-      border: 1px solid var(--border-strong);
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
       background: var(--bg-card);
       color: var(--text-main);
-      font-size: 14.5px;
+      font-size: 13.5px;
       outline: none;
-      transition: all 0.2s ease;
       font-family: inherit;
     }
 
     .pcins-search-input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-light);
+      box-shadow: 0 0 0 2px var(--primary-light);
     }
 
     .pcins-code-list {
-      padding: 14px 24px;
+      padding: 10px 18px;
       overflow-y: auto;
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      background: var(--bg-body);
+      gap: 6px;
+      background: var(--bg-card);
     }
 
     .pcins-code-item {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      padding: 12px 16px;
-      border-radius: 10px;
+      gap: 4px;
+      padding: 10px 12px;
+      border-radius: 6px;
       background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border-subtle);
       cursor: pointer;
-      transition: all 0.15s ease;
-      box-shadow: var(--shadow-sm);
+      transition: all 0.12s ease;
     }
 
     .pcins-code-item:hover {
-      border-color: var(--primary);
+      border-color: var(--primary-border);
       background: var(--bg-card-hover);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
     }
 
     .pcins-code-item-header {
@@ -613,10 +624,10 @@
 
     .pcins-code-badge {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
       background: var(--primary-light);
       color: var(--primary);
       border: 1px solid var(--primary-border);
@@ -624,94 +635,79 @@
     }
 
     .pcins-code-badge.success {
-      background: #ecfdf5;
-      color: #059669;
-      border-color: #a7f3d0;
-    }
-    [data-theme="dark"] .pcins-code-badge.success {
-      background: rgba(16, 185, 129, 0.14);
-      color: #34d399;
-      border-color: rgba(16, 185, 129, 0.3);
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: var(--success-border);
     }
 
     .pcins-code-badge.error {
-      background: #fef2f2;
-      color: #dc2626;
-      border-color: #fecaca;
-    }
-    [data-theme="dark"] .pcins-code-badge.error {
-      background: rgba(239, 68, 68, 0.14);
-      color: #f87171;
-      border-color: rgba(239, 68, 68, 0.3);
+      background: var(--error-bg);
+      color: var(--error);
+      border-color: var(--error-border);
     }
 
     .pcins-code-desc {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--text-main);
       word-break: keep-all;
     }
 
     .pcins-code-details {
-      font-size: 12.5px;
+      font-size: 12px;
       color: var(--text-muted);
-      line-height: 1.45;
+      line-height: 1.4;
       word-break: keep-all;
     }
 
     /* Scroll To Top Button */
     .pcins-scroll-top {
       position: fixed;
-      bottom: 28px;
-      right: 28px;
-      width: 44px;
-      height: 44px;
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      border-radius: 50%;
-      box-shadow: var(--shadow-lg);
+      bottom: 24px;
+      right: 24px;
+      width: 36px;
+      height: 36px;
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      box-shadow: var(--shadow-md);
       cursor: pointer;
       display: none;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
       z-index: 99;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
     }
 
     .pcins-scroll-top:hover {
-      background: var(--primary-hover);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
     }
 
     /* Toast Notification */
     .pcins-toast {
       position: fixed;
-      bottom: 28px;
+      bottom: 24px;
       left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #1e293b;
-      color: #f8fafc;
-      font-size: 13.5px;
-      font-weight: 600;
-      padding: 11px 22px;
-      border-radius: 30px;
-      border: 1px solid #334155;
-      box-shadow: var(--shadow-lg);
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg-code);
+      color: #f0f6fc;
+      font-size: 12.5px;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
       z-index: 100001;
       opacity: 0;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       align-items: center;
       gap: 8px;
       white-space: nowrap;
-    }
-
-    [data-theme="dark"] .pcins-toast {
-      background: #334155;
-      border-color: #475569;
     }
 
     .pcins-toast.show {
@@ -725,7 +721,7 @@
     }
 
     @keyframes slideUp {
-      from { transform: translateY(16px); opacity: 0; }
+      from { transform: translateY(10px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
 
@@ -734,7 +730,7 @@
         display: none;
       }
       .pcins-top-bar {
-        padding: 0 16px;
+        padding: 0 14px;
       }
       [role="navigation"] {
         width: 100% !important;
@@ -744,7 +740,7 @@
 </head>
 
 <body>
-  <!-- Top Scroll Progress Indicator -->
+  <!-- Top Progress Indicator -->
   <div id="scroll-progress"></div>
 
   <!-- Top Global Header -->
@@ -758,24 +754,31 @@
 
     <div class="pcins-nav-links">
       <!-- Test Account 1: Non-3DS -->
-      <div class="pcins-account-badge" onclick="copyText('M000000187', 'NON-3DS Merchant ID (M000000187) 복사 완료!')" title="클릭하여 NON-3DS 테스트 ID 복사">
-        <span class="badge-label">NON-3DS:</span> M000000187 <span class="copy-icon">📋</span>
+      <div class="pcins-account-badge" onclick="copyText('M000000187', 'Copied NON-3DS Merchant ID (M000000187)')" title="Click to copy NON-3DS Test ID">
+        <span class="badge-label">NON-3DS:</span> M000000187 
+        <span class="copy-icon">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        </span>
       </div>
 
       <!-- Test Account 2: 3DS -->
-      <div class="pcins-account-badge" onclick="copyText('M000000413', '3DS Merchant ID (M000000413) 복사 완료!')" title="클릭하여 3DS 테스트 ID 복사">
-        <span class="badge-label">3DS:</span> M000000413 <span class="copy-icon">📋</span>
+      <div class="pcins-account-badge" onclick="copyText('M000000413', 'Copied 3DS Merchant ID (M000000413)')" title="Click to copy 3DS Test ID">
+        <span class="badge-label">3DS:</span> M000000413 
+        <span class="copy-icon">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        </span>
       </div>
 
       <!-- Quick Result Code Search Button -->
       <button class="pcins-action-btn" onclick="openResultCodeModal()">
-        <span>🔍 Result Code</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>Result Code</span>
         <kbd>Ctrl+K</kbd>
       </button>
 
       <!-- Theme Switcher -->
-      <button class="pcins-theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="라이트/다크 모드 전환">
-        🌙
+      <button class="pcins-theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Light / Dark Mode">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
       </button>
     </div>
   </header>
@@ -783,12 +786,13 @@
   <!-- Redoc Static Injected Content -->
   {{{redocHTML}}}
 
-  <!-- Result Code Quick Finder Modal -->
+  <!-- Result Code Command Palette Modal -->
   <div class="pcins-modal-backdrop" id="result-code-modal" onclick="closeResultCodeModal(event)">
     <div class="pcins-modal" onclick="event.stopPropagation()">
       <div class="pcins-modal-header">
         <div class="pcins-modal-title">
-          <span>🛑 Result Code & Error Quick Finder</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <span>Result Code & Error Cause Finder</span>
         </div>
         <button class="pcins-modal-close" onclick="closeResultCodeModal()">&times;</button>
       </div>
@@ -797,7 +801,7 @@
           type="text" 
           id="code-search-input" 
           class="pcins-search-input" 
-          placeholder="에러 코드(예: 916, 927) 또는 키워드(예: 한도, 누락)를 입력하세요..." 
+          placeholder="Type error code (e.g. 916, 927) or keywords..." 
           oninput="filterResultCodes()" 
           autocomplete="off"
         />
@@ -809,59 +813,61 @@
   </div>
 
   <!-- Scroll To Top Button -->
-  <button class="pcins-scroll-top" id="scroll-top-btn" onclick="scrollToTop()" title="맨 위로 이동">
-    ↑
+  <button class="pcins-scroll-top" id="scroll-top-btn" onclick="scrollToTop()" title="Scroll to Top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
   </button>
 
   <!-- Toast Notification Container -->
   <div class="pcins-toast" id="pcins-toast">
-    <span id="toast-icon">✅</span>
-    <span id="toast-message">복사되었습니다!</span>
+    <span id="toast-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    </span>
+    <span id="toast-message">Copied to clipboard</span>
   </div>
 
   <script>
-    // Result Code Master Dataset (100% 1:1 with Apidog)
+    // Result Code Master Dataset
     const resultCodes = [
-      { code: '000', type: 'success', summary: 'Approval Success', details: '결제/취소/인증 정상 승인 완료' },
-      { code: '101', type: 'error', summary: 'Failed to enter continuous billing information', details: '연속과금(정기결제) 등록 정보 입력 실패' },
-      { code: '200', type: 'success', summary: 'Request Connection / Mail sent successfully', details: '접속 요청 성공 / 메일 정상 발송' },
-      { code: '611', type: 'error', summary: 'Your card exceeds the monthly limit. Contact your administrator.', details: '월간 카드 이용 한도 초과. 관리자 문의 필요' },
-      { code: '612', type: 'error', summary: 'Your card exceeds the number of times you use it per month. Contact your administrator.', details: '월간 카드 이용 횟수 초과. 관리자 문의 필요' },
-      { code: '711', type: 'error', summary: 'This card BIN cannot be used.', details: '사용 불가능한 카드 BIN 번호' },
-      { code: '712', type: 'error', summary: 'Korean card payment is not possible', details: '한국 발행 카드 결제 불가 (해외 카드 전용 라인)' },
-      { code: '713', type: 'error', summary: 'Risk card registration card, please try again with another card.', details: '리스크 관리 등록 카드 (도난/분실/이상거래 의심)' },
-      { code: '900', type: 'error', summary: 'The message is not long enough.', details: '전문(Message) 길이 부족 / 패킷 누락' },
-      { code: '901', type: 'error', summary: 'Connection Error. (VAN login failed / Invalid response data)', details: 'VAN사 로그인 실패(계정 오류) 또는 응답 데이터 이상' },
-      { code: '902', type: 'error', summary: 'VAN approval failure (Currency mismatch)', details: '가맹점 설정 통화와 요청 결제 통화 불일치 (VAN 라인은 1개 통화만 지원)' },
-      { code: '909', type: 'error', summary: 'Payment has already been made.', details: '이미 결제 완료된 중복 거래' },
-      { code: '910', type: 'error', summary: 'This card number is registered to the risk transaction card. Payment is not possible.', details: '리스크 거래 등록 카드번호. 결제 불가' },
-      { code: '911', type: 'error', summary: 'The one-time payment limit has been exceeded. Please contact the administrator.', details: '1회 결제 한도 초과. 관리자 문의 필요' },
-      { code: '912', type: 'error', summary: 'The daily payment limit has been exceeded. Please contact the administrator.', details: '1일 결제 한도 초과. 관리자 문의 필요' },
-      { code: '913', type: 'error', summary: 'The one-month payment limit has been exceeded. Please contact the administrator.', details: '1개월 결제 한도 초과. 관리자 문의 필요' },
-      { code: '914', type: 'error', summary: 'The password does not match.', details: '가맹점 비밀번호(merchantPwd) 불일치' },
-      { code: '915', type: 'error', summary: 'Merchant Agreement is not Live.', details: '가맹점 계약 상태 비활성 (Live 상태 아님)' },
-      { code: '916', type: 'error', summary: 'Requirements not entered* (Missing mandatory parameter)', details: '필수 파라미터 미입력 (merchantID, cardNo, expireM, expireY, price, ref 등 누락)' },
-      { code: '917', type: 'error', summary: 'Transaction information does not exist.', details: '해당 거래 정보 미존재 (주문번호/거래번호 확인)' },
-      { code: '918', type: 'error', summary: 'Internet access is restricted. Please contact the administrator.', details: '인터넷 접속 제한 (IP 차단 또는 허용되지 않은 접근)' },
-      { code: '919', type: 'error', summary: 'There is no payment information.', details: '결제 정보 없음' },
-      { code: '920', type: 'error', summary: 'Exceeded limit', details: '카드사 한도 초과' },
-      { code: '921', type: 'error', summary: 'Insufficient balance', details: '잔액 부족' },
-      { code: '922', type: 'error', summary: 'Incorrect card holder', details: '카드 명의자 불일치' },
-      { code: '923', type: 'error', summary: 'Incorrect card number', details: '유효하지 않은 카드 번호' },
-      { code: '924', type: 'error', summary: 'Incorrect expiration date', details: '유효기간(MM/YY) 오류' },
-      { code: '925', type: 'error', summary: 'Incorrect security code', details: '보안코드(CVV/CVC) 불일치' },
-      { code: '926', type: 'error', summary: 'System error', details: '시스템 내부 오류' },
-      { code: '927', type: 'error', summary: 'Card company approval rejected', details: '카드사 승인 거절 (도난/정지/한도 등)' },
-      { code: '928', type: 'error', summary: 'Invalid card type', details: '유효하지 않은 카드 브랜드 타입' },
-      { code: '929', type: 'error', summary: 'Stolen card', details: '도난/분실 신고된 카드' },
-      { code: '931', type: 'error', summary: 'Please contact the card company.', details: '카드사 직접 문의 필요' },
-      { code: '932', type: 'error', summary: 'Please enter the security code (CVV).', details: '보안코드(CVV) 미입력' },
-      { code: '933', type: 'error', summary: 'Incorrect card type.', details: '카드 종류 선택 오류' },
-      { code: '934', type: 'error', summary: 'This card is not eligible for the service.', details: '해당 서비스 미지원 카드' },
-      { code: '935', type: 'error', summary: 'Acquirer decline.', details: '매입사 승인 거절' },
-      { code: '936', type: 'error', summary: 'The minimum payment amount has not been met.', details: '최소 결제 금액 미달 (Yen / Dollar 최소금액 미충족)' },
-      { code: '941', type: 'error', summary: 'This payment has already been refunded.', details: '이미 환불 완료되었거나 현재 환불 진행 중인 거래' },
-      { code: '999', type: 'error', summary: 'Continuous charging has already been canceled.', details: '연속과금(정기결제) 이미 취소됨' }
+      { code: '000', type: 'success', summary: 'Approval Success', details: 'Payment / Cancellation / Authentication approval succeeded.' },
+      { code: '101', type: 'error', summary: 'Failed to enter continuous billing information', details: 'Failed to register continuous billing (recurring payment) information.' },
+      { code: '200', type: 'success', summary: 'Request Connection / Mail sent successfully', details: 'Connection request succeeded / Mail sent successfully.' },
+      { code: '611', type: 'error', summary: 'Your card exceeds the monthly limit. Contact your administrator.', details: 'Monthly card credit limit exceeded. Please contact your card issuer or administrator.' },
+      { code: '612', type: 'error', summary: 'Your card exceeds the number of times you use it per month. Contact your administrator.', details: 'Monthly card transaction frequency exceeded. Please contact your administrator.' },
+      { code: '711', type: 'error', summary: 'This card BIN cannot be used.', details: 'Card BIN cannot be used with this payment service.' },
+      { code: '712', type: 'error', summary: 'Korean card payment is not possible', details: 'Korean domestic card payment is not supported on this international payment line.' },
+      { code: '713', type: 'error', summary: 'Risk card registration card, please try again with another card.', details: 'High-risk / flagged card detected (reported stolen/lost or suspected fraud). Please use another card.' },
+      { code: '900', type: 'error', summary: 'The message is not long enough.', details: 'Transaction message packet length is insufficient or corrupted.' },
+      { code: '901', type: 'error', summary: 'Connection Error. (VAN login failed / Invalid response data)', details: 'VAN login/authentication failed or invalid response data received.' },
+      { code: '902', type: 'error', summary: 'VAN approval failure (Currency mismatch)', details: 'Requested payment currency does not match merchant configured currency (VAN route supports single currency).' },
+      { code: '909', type: 'error', summary: 'Payment has already been made.', details: 'Duplicate transaction - payment has already been processed for this order number.' },
+      { code: '910', type: 'error', summary: 'This card number is registered to the risk transaction card. Payment is not possible.', details: 'Card number registered in risk/fraud transaction monitoring database. Payment rejected.' },
+      { code: '911', type: 'error', summary: 'The one-time payment limit has been exceeded. Please contact the administrator.', details: 'One-time transaction amount limit exceeded. Please contact administrator.' },
+      { code: '912', type: 'error', summary: 'The daily payment limit has been exceeded. Please contact the administrator.', details: 'Daily transaction amount limit exceeded. Please contact administrator.' },
+      { code: '913', type: 'error', summary: 'The one-month payment limit has been exceeded. Please contact the administrator.', details: 'Monthly transaction amount limit exceeded. Please contact administrator.' },
+      { code: '914', type: 'error', summary: 'The password does not match.', details: 'Merchant password (merchantPwd) does not match.' },
+      { code: '915', type: 'error', summary: 'Merchant Agreement is not Live.', details: 'Merchant agreement status is inactive (Live status required to process payments).' },
+      { code: '916', type: 'error', summary: 'Requirements not entered* (Missing mandatory parameter)', details: 'Mandatory parameter missing (e.g., merchantId, cardNo, expireM, expireY, price, ref).' },
+      { code: '917', type: 'error', summary: 'Transaction information does not exist.', details: 'Transaction information does not exist (please verify order ref or transNo).' },
+      { code: '918', type: 'error', summary: 'Internet access is restricted. Please contact the administrator.', details: 'Internet/IP access restricted or unauthorized connection attempt.' },
+      { code: '919', type: 'error', summary: 'There is no payment information.', details: 'No payment transaction record found.' },
+      { code: '920', type: 'error', summary: 'Exceeded limit', details: 'Cardholder credit limit exceeded.' },
+      { code: '921', type: 'error', summary: 'Insufficient balance', details: 'Insufficient account balance.' },
+      { code: '922', type: 'error', summary: 'Incorrect card holder', details: 'Cardholder name does not match issuer records.' },
+      { code: '923', type: 'error', summary: 'Incorrect card number', details: 'Invalid card number or checksum failed.' },
+      { code: '924', type: 'error', summary: 'Incorrect expiration date', details: 'Invalid card expiration date (MM/YY).' },
+      { code: '925', type: 'error', summary: 'Incorrect security code', details: 'Incorrect security code (CVV/CVC).' },
+      { code: '926', type: 'error', summary: 'System error', details: 'Internal system processing error.' },
+      { code: '927', type: 'error', summary: 'Card company approval rejected', details: 'Card company declined transaction approval (stolen/suspended/limit).' },
+      { code: '928', type: 'error', summary: 'Invalid card type', details: 'Unsupported card brand or card type.' },
+      { code: '929', type: 'error', summary: 'Stolen card', details: 'Reported stolen or lost card.' },
+      { code: '931', type: 'error', summary: 'Please contact the card company.', details: 'Transaction rejected by issuer. Please contact issuing bank directly.' },
+      { code: '932', type: 'error', summary: 'Please enter the security code (CVV).', details: 'Security code (CVV) parameter is required.' },
+      { code: '933', type: 'error', summary: 'Incorrect card type.', details: 'Incorrect card brand or type selected.' },
+      { code: '934', type: 'error', summary: 'This card is not eligible for the service.', details: 'Card is not eligible for this payment service.' },
+      { code: '935', type: 'error', summary: 'Acquirer decline.', details: 'Payment acquirer declined transaction.' },
+      { code: '936', type: 'error', summary: 'The minimum payment amount has not been met.', details: 'Payment amount is below minimum allowed threshold (check Yen / USD minimums).' },
+      { code: '941', type: 'error', summary: 'This payment has already been refunded.', details: 'Payment transaction has already been refunded or refund is currently in progress.' },
+      { code: '999', type: 'error', summary: 'Continuous charging has already been canceled.', details: 'Continuous charging (recurring billing) subscription is already cancelled.' }
     ];
 
     // Theme Management
@@ -888,7 +894,11 @@
       } catch (e) {}
       const btn = document.getElementById('theme-toggle-btn');
       if (btn) {
-        btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+        if (theme === 'dark') {
+          btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>';
+        } else {
+          btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+        }
       }
     }
 
@@ -911,20 +921,18 @@
     }
 
     // Toast Notification
-    function showToast(message, icon = '✅') {
+    function showToast(message) {
       const toast = document.getElementById('pcins-toast');
       const msg = document.getElementById('toast-message');
-      const ic = document.getElementById('toast-icon');
       if (toast && msg) {
         msg.textContent = message;
-        if (ic) ic.textContent = icon;
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2500);
+        setTimeout(() => toast.classList.remove('show'), 2200);
       }
     }
 
-    // Robust Clipboard Copy with Fallback
-    function copyText(text, successMsg = '클립보드에 복사되었습니다!') {
+    // Robust Clipboard Copy
+    function copyText(text, successMsg = 'Copied to clipboard') {
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text).then(() => {
           showToast(successMsg);
@@ -980,15 +988,18 @@
       if (!container) return;
       
       if (!list || list.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding: 30px; color: var(--text-muted);">일치하는 에러 코드가 없습니다.</div>';
+        container.innerHTML = '<div style="text-align:center; padding: 24px; color: var(--text-muted); font-size: 13px;">No matching result codes found.</div>';
         return;
       }
 
       container.innerHTML = list.map(item => `
-        <div class="pcins-code-item" onclick="copyText('${item.code}', '에러 코드 [${item.code}] 복사 완료!')">
+        <div class="pcins-code-item" onclick="copyText('${item.code}', 'Copied Error Code [${item.code}]')">
           <div class="pcins-code-item-header">
             <span class="pcins-code-badge ${item.type}">${item.code}</span>
-            <span style="font-size: 11px; color: var(--text-dim);">클릭하여 코드 복사 📋</span>
+            <span style="font-size: 11px; color: var(--text-dim); display: inline-flex; align-items: center; gap: 4px;">
+              Copy
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </span>
           </div>
           <div class="pcins-code-desc">${item.summary}</div>
           <div class="pcins-code-details">${item.details}</div>

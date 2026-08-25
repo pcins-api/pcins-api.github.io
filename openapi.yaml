@@ -13,20 +13,20 @@ info:
 
     ---
 
-    ## 📑 Document Index
-    1. [Copyright & Confidentiality Notice](#-copyright--confidentiality-notice)
-    2. [Change History (v1.0.0 ~ v1.0.5)](#-change-history)
-    3. [Abbreviations and Symbols](#-abbreviations-and-symbols)
-    4. [Master Field Table (No 1 ~ No 48)](#-master-field-table-no-1--no-48)
-    5. [Base URLs, Security & Test Accounts](#-base-urls-security--test-accounts)
-    6. [Data Format Principles](#-data-format-principles)
-    7. [Common Parameter Enums](#-common-parameter-enums)
-    8. [Prefecture City Codes (ISO 3166-2:JP 1~47)](#-prefecture-city-code-citycode---iso-3166-2jp)
-    9. [Result Codes & Detailed Error Cause Breakdown](#-result-codes)
+    ## Document Index
+    1. [Copyright & Confidentiality Notice](#copyright--confidentiality-notice)
+    2. [Change History (v1.0.0 ~ v1.0.5)](#change-history)
+    3. [Abbreviations and Symbols](#abbreviations-and-symbols)
+    4. [Master Field Table (No 1 ~ No 48)](#master-field-table-no-1--no-48)
+    5. [Base URLs, Security & Test Accounts](#base-urls-security--test-accounts)
+    6. [Data Format Principles](#data-format-principles)
+    7. [Common Parameter Enums](#common-parameter-enums)
+    8. [Prefecture City Codes (ISO 3166-2:JP 1~47)](#prefecture-city-code-citycode---iso-3166-2jp)
+    9. [Result Codes & Detailed Error Cause Breakdown](#result-codes)
 
     ---
 
-    ## 🔒 Copyright & Confidentiality Notice
+    ## Copyright & Confidentiality Notice
     - The copyright of this document belongs to **PCINS Payment Gateway Co., Ltd.**
     - Reproduction, modification, distribution, and similar acts in any part of this document by any means or form, including electronic and mechanical, without prior written permission from us is strictly prohibited.
     - This specification is specified as confidential information in the non-disclosure agreement (NDA) between you and PCINS. Please handle this specification in accordance with the provisions of the Non-Disclosure Agreement.
@@ -34,7 +34,7 @@ info:
 
     ---
 
-    ## 🔄 Change History
+    ## Change History
     <details open>
       <summary style='cursor: pointer; font-weight: 600; font-size: 15px; color: #2563eb;'><strong>v1.0.5 (Latest)</strong></summary>
       <ul>
@@ -78,7 +78,7 @@ info:
 
     ---
 
-    ## 🔤 Abbreviations and Symbols
+    ## Abbreviations and Symbols
     | Symbol | Definition | Description |
     | :---: | :--- | :--- |
     | `<` | Variable length | Variable length data that can be entered up to the written value |
@@ -93,7 +93,7 @@ info:
 
     ---
 
-    ## 📋 Master Field Table (No 1 ~ No 48)
+    ## Master Field Table (No 1 ~ No 48)
     | No | Field Name | Field Description | Size (byte) | Type | Condition |
     | :---: | :--- | :--- | :---: | :---: | :---: |
     | 1 | `?` | Request Start | 1 | a | M |
@@ -147,11 +147,11 @@ info:
 
     ---
 
-    ## 🌐 Base URLs, Security & Test Accounts
+    ## Base URLs, Security & Test Accounts
     - **Production Base URL**: `https://pay.pcins.co.kr/gw`
     - **Callback Security**: Callback server security allows connections **only from IP `61.74.60.18` and `61.74.60.19`** (Method: `POST`).
 
-    ### 🧪 Test Account Environment
+    ### Test Account Environment
     | Authentication Mode | `merchantId` | `merchantPwd` | Notes |
     | :--- | :--- | :--- | :--- |
     | **NON-3DS (General)** | `M000000187` | `1234` | Standard test merchant account |
@@ -159,7 +159,7 @@ info:
 
     ---
 
-    ## 📐 Data Format Principles
+    ## Data Format Principles
     1. **Currency Amounts**:
        - **JPY** amounts do not permit decimal points.
        - **USD, EUR, CNY** amounts allow up to two decimal places (e.g., `19.99`).
@@ -172,7 +172,7 @@ info:
 
     ---
 
-    ## ⚙️ Common Parameter Enums
+    ## Common Parameter Enums
 
     ### 1. Message Stage (`erst`)
     | Value | Definition | Description |
@@ -194,11 +194,11 @@ info:
     ### 3. Currency Code (`currType`)
     | Code | Currency Name | Decimal Allowed |
     | :---: | :--- | :---: |
-    | `JPY` | Japanese Yen | ❌ No |
-    | `USD` | US Dollar | ✔️ Yes (max 2) |
-    | `EUR` | Euro | ✔️ Yes (max 2) |
-    | `KRW` | Korean Won | ❌ No |
-    | `CNY` | Chinese Yuan | ✔️ Yes (max 2) |
+    | `JPY` | Japanese Yen | No |
+    | `USD` | US Dollar | Yes (max 2) |
+    | `EUR` | Euro | Yes (max 2) |
+    | `KRW` | Korean Won | No |
+    | `CNY` | Chinese Yuan | Yes (max 2) |
 
     ### 4. Card Brand Type (`cardType`)
     | Code | Brand Name |
@@ -235,7 +235,7 @@ info:
 
     ---
 
-    ## 🗾 Prefecture City Code (`cityCode`) - ISO 3166-2:JP
+    ## Prefecture City Code (`cityCode`) - ISO 3166-2:JP
     | Code | Prefecture | Code | Prefecture | Code | Prefecture |
     | :---: | :--- | :---: | :--- | :---: | :--- |
     | `1` | HOKKAIDO | `17` | ISHIKAWA | `33` | OKAYAMA |
@@ -257,7 +257,7 @@ info:
 
     ---
 
-    ## 🛑 Result Codes
+    ## Result Codes
     | Code | Summary Definition |
     | :---: | :--- |
     | `000` | Approval Success |
@@ -302,7 +302,7 @@ info:
     | `999` | Continuous charging has already been canceled. |
 
     <details>
-      <summary style='cursor: pointer; font-weight: 600; color: #2563eb;'>🔍 Detailed Error Cause Breakdown</summary>
+      <summary style='cursor: pointer; font-weight: 600; color: #2563eb;'>Detailed Error Cause Breakdown</summary>
 
       ### Code 200
       - `Request Connection`
@@ -347,7 +347,7 @@ info:
 
     ---
 
-    ## 📞 Technical Support
+    ## Technical Support
     - **Email**: `support@pcins.co.kr`
     - **Service Website**: [https://pcins.co.kr](https://pcins.co.kr)
   contact:
@@ -395,16 +395,16 @@ paths:
 
         > **Note:** Since this is a browser redirect Hosted Payment, the transaction results are returned via **`returnURL` (Query String)** and **`callbackURL` (Async Notification)** upon completion. If 3D Secure authentication is triggered, an XML response is returned.
 
-        ### 📌 Transaction Types (`tradeGubun`)
+        ### Transaction Types (`tradeGubun`)
         - `tradeGubun=1`: **Credit Card Payment** (Standard online credit card payment)
         - `tradeGubun=7`: **Credit Certification** (Card verification without charging amount, price=0)
 
-        ### 🔄 Interaction Flow
+        ### Interaction Flow
         1. **Step 1 (Request Start)**: Merchant submits HTML Form POST to `/pay_link.jsp` with Master fields (No 1 ~ No 12).
         2. **Step 2 (Enter Info)**: Customer enters credit card details on PCINS secure hosted payment page.
         3. **Step 3 (Return Result)**: PCINS redirects back to merchant's `returnURL` and notifies `callbackURL` (POST method).
 
-        ### 📩 Return Parameters
+        ### Return Parameters
         - **Success Callback (`callbackURL`)**:  
           `callbackURL?merchantId={id}&ref={ref}&payId={payId}&currType={cur}&price={price}&transNo={transNo}&transCode=AS`
         - **Success Return (`returnURL`)**:  
@@ -570,13 +570,13 @@ paths:
 
         > **Note:** All future 3D Secure payments will be routed via this method.
 
-        ### 🔄 Interaction Flow
+        ### Interaction Flow
         1. Merchant POSTs payment request to `/pay_external.jsp`.
         2. Gateway responds with JavaScript redirect script (`window.location.href`).
         3. Customer completes 3DS challenge on external bank authentication page.
         4. Results are reported to `callbackURL` and customer is redirected to `returnURL`.
 
-        ### 📩 Return Parameters
+        ### Return Parameters
         - **Success Callback (`callbackURL`)**:  
           `callbackURL?merchantId={id}&ref={ref}&payId={payId}&currType={cur}&price={price}&transNo={transNo}&transCode=AS`
         - **Success Return (`returnURL`)**:  
@@ -696,13 +696,13 @@ paths:
         Direct 3D Secure authentication payment for **VAN22 (PCINS HR)**.
         Allows merchant checkout page to collect card and address information directly and submit to PCINS for 3DS verification.
 
-        ### 🔄 Interaction Flow
+        ### Interaction Flow
         1. Merchant collects card details + billing address (`cityCode`, `address`, `postCode`).
         2. Merchant POSTs data to `/pay_direct3ds.jsp`.
         3. If 3DS challenge is required, customer is redirected via Javascript (`<script>window.location.href=...</script>`).
         4. If transaction succeeds without 3DS friction, `<tranactionresponse>` XML is returned immediately.
 
-        ### 📩 Return Parameters
+        ### Return Parameters
         - **Success Callback (`callbackURL`)**:  
           `callbackURL?merchantId={id}&ref={ref}&payId={payId}&currType={cur}&price={price}&transNo={transNo}&transCode=AS`
         - **Success Return (`returnURL`)**:  
@@ -798,7 +798,7 @@ paths:
 
         > **Note:** Since this is a browser redirect Hosted Payment, the transaction results are returned via **`returnURL` (Query String)** and **`callbackURL` (Async Notification)** upon payment completion.
 
-        ### 🔄 Interaction Flow
+        ### Interaction Flow
         1. Merchant submits HTML Form POST to `/qr_link.jsp` with `currType=CNY` (or JPY).
         2. Customer scans QR code with Alipay/WeChat app and authorizes payment.
         3. Gateway triggers `callbackURL` and redirects customer to `returnURL`.
@@ -881,12 +881,12 @@ paths:
       description: |
         Direct Server-to-Server API for processing transactions without a hosted payment screen.
 
-        ### 📌 Supported Operations via `tradeGubun`
+        ### Supported Operations via `tradeGubun`
         - `tradeGubun=1`: **Credit Card Sale / Speed Payment** (Direct card authorization)
         - `tradeGubun=2`: **Credit Card Refund** (Cancel/refund approved payment)
         - `tradeGubun=9`: **Transaction Inquiry** (Query transaction status by `ref`)
 
-        ### ⚡ Speed Payment (Non-UI)
+        ### Speed Payment (Non-UI)
         When using stored user card information, set `cardNo` to one of the following virtual search codes:
         - `88888888888888`: Search by `merchantId` + `payTel` + `payId`
         - `88888888888881`: Search by `merchantId` + `payTel`
@@ -1025,7 +1025,7 @@ paths:
       description: |
         Used by the merchant to notify PCINS of the 3D Secure completion or query final authorization state after challenge completion.
 
-        ### 🔄 Interaction Flow
+        ### Interaction Flow
         1. Customer completes 3DS verification with the card issuer.
         2. Notification is dispatched with `transNo` and `checkoutId`.
         3. PCINS confirms transaction and returns final `<TransactionResponse>`.
