@@ -3,6 +3,8 @@ info:
   title: PCINS Payment Gateway API
   version: 1.0.5
   description: |
+    ![PCINS Global e-Trade Company](pcins_image.png)
+
     # PCINS Hosted Payment Interface Service
 
     > **Interfacing Specification**  

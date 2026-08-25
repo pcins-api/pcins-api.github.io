@@ -11,6 +11,8 @@ on:
       - '.redocly.yaml'
       - 'package.json'
       - 'package-lock.json'
+      - 'pcins_image.png'
+      - 'pcins_logo.png'
   workflow_dispatch:
 
 permissions:
@@ -36,7 +38,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
+        
       - name: Install dependencies
         run: npm ci
 

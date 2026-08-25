@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npx serve -p 8080 .",
     "preview": "npx @redocly/cli preview-docs openapi.yaml",
-    "build": "npx @redocly/cli build-docs openapi.yaml --template template.hbs --output dist/index.html",
+    "build": "npx @redocly/cli build-docs openapi.yaml --template template.hbs --output dist/index.html && node -e \"const fs=require('fs'); fs.copyFileSync('pcins_image.png','dist/pcins_image.png'); fs.copyFileSync('pcins_logo.png','dist/pcins_logo.png');\"",
     "lint": "npx @redocly/cli lint openapi.yaml"
   },
   "devDependencies": {

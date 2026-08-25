@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="PCINS Payment Gateway API Documentation - Hosted UI and Server-to-Server API Integration Guide." />
-  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="pcins_logo.png" type="image/png" />
 
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -160,16 +160,12 @@
       white-space: nowrap;
     }
 
-    .pcins-logo-badge {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 14px;
-      letter-spacing: 0.5px;
-      padding: 6px 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(59, 130, 246, 0.28);
-      white-space: nowrap;
+    .pcins-logo-icon {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+      border-radius: 4px;
     }
 
     .pcins-brand-title {
@@ -317,6 +313,21 @@
       background-color: var(--bg-body) !important;
     }
 
+    /* Banner Image Styling in Top Section */
+    .api-content img[src*="pcins_image.png"] {
+      max-width: 280px !important;
+      height: auto !important;
+      margin-bottom: 20px !important;
+      display: block !important;
+      border-radius: 6px !important;
+    }
+
+    [data-theme="dark"] .api-content img[src*="pcins_image.png"] {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+
     /* Left Sidebar Menu Width & Text Wrapping Prevention */
     [role="navigation"] {
       width: 285px !important;
@@ -461,7 +472,7 @@
       background-color: #0b1120 !important;
     }
 
-    /* Hide Redoc internal duplicate Copy button if custom exists, or style Redoc copy button cleanly */
+    /* Style Redoc copy button cleanly */
     div[class*="sc-gjLKRm"] button {
       border-radius: 6px !important;
       font-size: 12px !important;
@@ -739,8 +750,8 @@
   <!-- Top Global Header -->
   <header class="pcins-top-bar">
     <a href="#" class="pcins-brand">
-      <div class="pcins-logo-badge">PCINS</div>
-      <div class="pcins-brand-title">Payment Gateway API</div>
+      <img src="pcins_logo.png" alt="PCINS Logo" class="pcins-logo-icon" />
+      <div class="pcins-brand-title">PCINS Gateway API</div>
       <span class="pcins-version-tag">v1.0.5</span>
       <span class="pcins-spec-tag">OpenAPI 3.0</span>
     </a>
